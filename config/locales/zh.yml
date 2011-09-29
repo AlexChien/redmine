@@ -127,7 +127,7 @@ zh:
         greater_than_start_date: "必须在起始日期之后"
         not_same_project: "不属于同一个项目"
         circular_dependency: "此关联将导致循环依赖"
-        cant_link_an_issue_with_a_descendant: "问题不能关联到它的子任务"
+        cant_link_an_issue_with_a_descendant: "任务不能关联到它的子任务"
 
   actionview_instancetag_blank_option: 请选择
 
@@ -163,32 +163,32 @@ zh:
   notice_email_error: "发送邮件时发生错误 (%{value})"
   notice_feeds_access_key_reseted: 您的RSS存取键已被重置。
   notice_api_access_key_reseted: 您的API访问键已被重置。
-  notice_failed_to_save_issues: "%{count} 个问题保存失败（共选择 %{total} 个问题）：%{ids}."
+  notice_failed_to_save_issues: "%{count} 个任务保存失败（共选择 %{total} 个任务）：%{ids}."
   notice_failed_to_save_members: "成员保存失败: %{errors}."
-  notice_no_issue_selected: "未选择任何问题！请选择您要编辑的问题。"
+  notice_no_issue_selected: "未选择任何任务！请选择您要编辑的任务。"
   notice_account_pending: "您的帐号已被成功创建，正在等待管理员的审核。"
   notice_default_data_loaded: 成功载入默认设置。
   notice_unable_delete_version: 无法删除版本
   notice_unable_delete_time_entry: 无法删除工时
-  notice_issue_done_ratios_updated: 问题完成度已更新。
+  notice_issue_done_ratios_updated: 任务完成度已更新。
   notice_gantt_chart_truncated: "The chart was truncated because it exceeds the maximum number of items that can be displayed (%{max})"
 
   error_can_t_load_default_data: "无法载入默认设置：%{value}"
   error_scm_not_found: "版本库中不存在该条目和（或）其修订版本。"
   error_scm_command_failed: "访问版本库时发生错误：%{value}"
   error_scm_annotate: "该条目不存在或无法追溯。"
-  error_issue_not_found_in_project: '问题不存在或不属于此项目'
+  error_issue_not_found_in_project: '任务不存在或不属于此项目'
   error_no_tracker_in_project: 该项目未设定跟踪标签，请检查项目配置。
-  error_no_default_issue_status: 未设置默认的问题状态。请检查系统设置（"管理" -> "问题状态"）。
+  error_no_default_issue_status: 未设置默认的任务状态。请检查系统设置（"管理" -> "任务状态"）。
   error_can_not_delete_custom_field: 无法删除自定义属性
-  error_can_not_delete_tracker: "该跟踪标签已包含问题,无法删除"
+  error_can_not_delete_tracker: "该跟踪标签已包含任务,无法删除"
   error_can_not_remove_role: "该角色正在使用中，无法删除"
-  error_can_not_reopen_issue_on_closed_version: 该问题被关联到一个已经关闭的版本，因此无法重新打开。
+  error_can_not_reopen_issue_on_closed_version: 该任务被关联到一个已经关闭的版本，因此无法重新打开。
   error_can_not_archive_project: 该项目无法被存档
-  error_issue_done_ratios_not_updated: 问题完成度未能被更新。
+  error_issue_done_ratios_not_updated: 任务完成度未能被更新。
   error_workflow_copy_source: 请选择一个源跟踪标签或者角色
   error_workflow_copy_target: 请选择目标跟踪标签和角色
-  error_unable_delete_issue_status: '无法删除问题状态'
+  error_unable_delete_issue_status: '无法删除任务状态'
   error_unable_to_connect: "无法连接 (%{value})"
   warning_attachments_not_saved: "%{count} 个文件保存失败"
 
@@ -200,8 +200,8 @@ zh:
   mail_body_account_information: 您的帐号信息
   mail_subject_account_activation_request: "%{value}帐号激活请求"
   mail_body_account_activation_request: "新用户（%{value}）已完成注册，正在等候您的审核："
-  mail_subject_reminder: "%{count} 个问题需要尽快解决 (%{days})"
-  mail_body_reminder: "指派给您的 %{count} 个问题需要在 %{days} 天内完成："
+  mail_subject_reminder: "%{count} 个任务需要尽快解决 (%{days})"
+  mail_body_reminder: "指派给您的 %{count} 个任务需要在 %{days} 天内完成："
   mail_subject_wiki_content_added: "'%{id}' wiki页面已添加"
   mail_body_wiki_content_added: "'%{id}' wiki页面已由 %{author} 添加。"
   mail_subject_wiki_content_updated: "'%{id}' wiki页面已更新。"
@@ -233,10 +233,10 @@ zh:
   field_category: 类别
   field_title: 标题
   field_project: 项目
-  field_issue: 问题
+  field_issue: 任务
   field_status: 状态
   field_notes: 说明
-  field_is_closed: 已关闭的问题
+  field_is_closed: 已关闭的任务
   field_is_default: 默认值
   field_tracker: 跟踪
   field_subject: 主题
@@ -284,9 +284,9 @@ zh:
   field_spent_on: 日期
   field_identifier: 标识
   field_is_filter: 作为过滤条件
-  field_issue_to: 相关问题
+  field_issue_to: 相关任务
   field_delay: 延期
-  field_assignable: 问题可指派给此角色
+  field_assignable: 任务可指派给此角色
   field_redirect_existing_links: 重定向到现有链接
   field_estimated_hours: 预期时间
   field_column_names: 列
@@ -315,7 +315,7 @@ zh:
   setting_login_required: 要求认证
   setting_self_registration: 允许自注册
   setting_attachment_max_size: 附件大小限制
-  setting_issues_export_limit: 问题导出条目的限制
+  setting_issues_export_limit: 任务导出条目的限制
   setting_mail_from: 邮件发件人地址
   setting_bcc_recipients: 使用密件抄送 (bcc)
   setting_plain_text_mail: 纯文本（无HTML）
@@ -326,13 +326,13 @@ zh:
   setting_default_projects_public: 新建项目默认为公开项目
   setting_autofetch_changesets: 自动获取程序变更
   setting_sys_api_enabled: 启用用于版本库管理的Web Service
-  setting_commit_ref_keywords: 用于引用问题的关键字
-  setting_commit_fix_keywords: 用于解决问题的关键字
+  setting_commit_ref_keywords: 用于引用任务的关键字
+  setting_commit_fix_keywords: 用于解决任务的关键字
   setting_autologin: 自动登录
   setting_date_format: 日期格式
   setting_time_format: 时间格式
-  setting_cross_project_issue_relations: 允许不同项目之间的问题关联
-  setting_issue_list_default_columns: 问题列表中显示的默认列
+  setting_cross_project_issue_relations: 允许不同项目之间的任务关联
+  setting_issue_list_default_columns: 任务列表中显示的默认列
   setting_repositories_encodings: 版本库编码
   setting_emails_header: 邮件头
   setting_emails_footer: 邮件签名
@@ -340,7 +340,7 @@ zh:
   setting_per_page_options: 每页显示条目个数的设置
   setting_user_format: 用户显示格式
   setting_activity_days_default: 在项目活动中显示的天数
-  setting_display_subprojects_issues: 在项目页面上默认显示子项目的问题
+  setting_display_subprojects_issues: 在项目页面上默认显示子项目的任务
   setting_enabled_scm: 启用 SCM
   setting_mail_handler_body_delimiters: 在这些行之后截断邮件
   setting_mail_handler_api_enabled: 启用用于接收邮件的服务
@@ -355,9 +355,9 @@ zh:
   setting_password_min_length: 最短密码长度
   setting_new_project_user_role_id: 非管理员用户新建项目时将被赋予的（在该项目中的）角色
   setting_default_projects_modules: 新建项目默认启用的模块
-  setting_issue_done_ratio: 计算问题完成度：
-  setting_issue_done_ratio_issue_field: 使用问题（的完成度）属性
-  setting_issue_done_ratio_issue_status: 使用问题状态
+  setting_issue_done_ratio: 计算任务完成度：
+  setting_issue_done_ratio_issue_field: 使用任务（的完成度）属性
+  setting_issue_done_ratio_issue_status: 使用任务状态
   setting_start_of_week: 日历开始于
   setting_rest_api_enabled: 启用REST web service
   setting_cache_formatted_text: 缓存格式化文字
@@ -373,16 +373,16 @@ zh:
   permission_manage_members: 管理成员
   permission_manage_project_activities: 管理项目活动
   permission_manage_versions: 管理版本
-  permission_manage_categories: 管理问题类别
-  permission_view_issues: 查看问题
-  permission_add_issues: 新建问题
-  permission_edit_issues: 更新问题
-  permission_manage_issue_relations: 管理问题关联
+  permission_manage_categories: 管理任务类别
+  permission_view_issues: 查看任务
+  permission_add_issues: 新建任务
+  permission_edit_issues: 更新任务
+  permission_manage_issue_relations: 管理任务关联
   permission_add_issue_notes: 添加说明
   permission_edit_issue_notes: 编辑说明
   permission_edit_own_issue_notes: 编辑自己的说明
-  permission_move_issues: 移动问题
-  permission_delete_issues: 删除问题
+  permission_move_issues: 移动任务
+  permission_delete_issues: 删除任务
   permission_manage_public_queries: 管理公开的查询
   permission_save_queries: 保存查询
   permission_view_gantt: 查看甘特图
@@ -422,7 +422,7 @@ zh:
   permission_export_wiki_pages: 导出 wiki 页面
   permission_manage_subtasks: 管理子任务
 
-  project_module_issue_tracking: 问题跟踪
+  project_module_issue_tracking: 任务跟踪
   project_module_time_tracking: 时间跟踪
   project_module_news: 新闻
   project_module_documents: 文档
@@ -446,13 +446,13 @@ zh:
     other: "%{count} 个项目"
   label_project_all: 所有的项目
   label_project_latest: 最近的项目
-  label_issue: 问题
-  label_issue_new: 新建问题
-  label_issue_plural: 问题
-  label_issue_view_all: 查看所有问题
-  label_issues_by: "按 %{value} 分组显示问题"
-  label_issue_added: 问题已添加
-  label_issue_updated: 问题已更新
+  label_issue: 任务
+  label_issue_new: 新建任务
+  label_issue_plural: 任务
+  label_issue_view_all: 查看所有任务
+  label_issues_by: "按 %{value} 分组显示任务"
+  label_issue_added: 任务已添加
+  label_issue_updated: 任务已更新
   label_document: 文档
   label_document_new: 新建文档
   label_document_plural: 文档
@@ -468,12 +468,12 @@ zh:
   label_tracker_plural: 跟踪标签
   label_tracker_new: 新建跟踪标签
   label_workflow: 工作流程
-  label_issue_status: 问题状态
-  label_issue_status_plural: 问题状态
-  label_issue_status_new: 新建问题状态
-  label_issue_category: 问题类别
-  label_issue_category_plural: 问题类别
-  label_issue_category_new: 新建问题类别
+  label_issue_status: 任务状态
+  label_issue_status_plural: 任务状态
+  label_issue_status_new: 新建任务状态
+  label_issue_category: 任务类别
+  label_issue_category_plural: 任务类别
+  label_issue_category_new: 新建任务类别
   label_custom_field: 自定义属性
   label_custom_field_plural: 自定义属性
   label_custom_field_new: 新建自定义属性
@@ -494,8 +494,8 @@ zh:
   label_login: 登录
   label_logout: 退出
   label_help: 帮助
-  label_reported_issues: 已报告的问题
-  label_assigned_to_me_issues: 指派给我的问题
+  label_reported_issues: 已报告的任务
+  label_assigned_to_me_issues: 指派给我的任务
   label_last_login: 最后登录
   label_registered_on: 注册于
   label_activity: 活动
@@ -650,7 +650,7 @@ zh:
   label_roadmap: 路线图
   label_roadmap_due_in: "截止日期到  %{value}"
   label_roadmap_overdue: "%{value} 延期"
-  label_roadmap_no_issues: 该版本没有问题
+  label_roadmap_no_issues: 该版本没有任务
   label_search: 搜索
   label_result_plural: 结果
   label_all_words: 所有单词
@@ -665,7 +665,7 @@ zh:
   label_preview: 预览
   label_feed_plural: Feeds
   label_changes_details: 所有变更的详情
-  label_issue_tracking: 问题跟踪
+  label_issue_tracking: 任务跟踪
   label_spent_time: 耗时
   label_overall_spent_time: 总体耗时
   label_f_hour: "%{value} 小时"
@@ -681,8 +681,8 @@ zh:
   label_options: 选项
   label_copy_workflow_from: 从以下选项复制工作流程
   label_permissions_report: 权限报表
-  label_watched_issues: 跟踪的问题
-  label_related_issues: 相关的问题
+  label_watched_issues: 跟踪的任务
+  label_related_issues: 相关的任务
   label_applied_status: 应用后的状态
   label_loading: 载入中...
   label_relation_new: 新建关联
@@ -734,7 +734,7 @@ zh:
   label_changeset_plural: 变更
   label_default_columns: 默认列
   label_no_change_option: (不变)
-  label_bulk_edit_selected_issues: 批量修改选中的问题
+  label_bulk_edit_selected_issues: 批量修改选中的任务
   label_theme: 主题
   label_default: 默认
   label_search_titles_only: 仅在标题中搜索
@@ -783,7 +783,7 @@ zh:
   label_version_sharing_hierarchy: 与项目继承层次共享
   label_version_sharing_tree: 与项目树共享
   label_version_sharing_system: 与所有项目共享
-  label_update_issue_done_ratios: 更新问题的完成度
+  label_update_issue_done_ratios: 更新任务的完成度
   label_copy_source: 源
   label_copy_target: 目标
   label_copy_same_as_target: 与目标一致
@@ -818,7 +818,7 @@ zh:
   button_list: 列表
   button_view: 查看
   button_move: 移动
-  button_move_and_follow: 移动并转到新问题
+  button_move_and_follow: 移动并转到新任务
   button_back: 返回
   button_cancel: 取消
   button_activate: 激活
@@ -834,7 +834,7 @@ zh:
   button_rename: 重命名
   button_change_password: 修改密码
   button_copy: 复制
-  button_copy_and_follow: 复制并转到新问题
+  button_copy_and_follow: 复制并转到新任务
   button_annotate: 追溯
   button_update: 更新
   button_configure: 配置
@@ -859,7 +859,7 @@ zh:
   text_subprojects_destroy_warning: "以下子项目也将被同时删除：%{value}"
   text_workflow_edit: 选择角色和跟踪标签来编辑工作流程
   text_are_you_sure: 您确定？
-  text_are_you_sure_with_children: "删除问题及子任务？"
+  text_are_you_sure_with_children: "删除任务及子任务？"
   text_journal_changed: "%{label} 从 %{old} 变更为 %{new}"
   text_journal_set_to: "%{label} 被设置为 %{value}"
   text_journal_deleted: "%{label} 已删除 (%{old})"
@@ -875,28 +875,28 @@ zh:
   text_unallowed_characters: 非法字符
   text_comma_separated: 可以使用多个值（用逗号,分开）。
   text_line_separated: 可以使用多个值（每行一个值）。
-  text_issues_ref_in_commit_messages: 在提交信息中引用和解决问题
-  text_issue_added: "问题 %{id} 已由 %{author} 提交。"
-  text_issue_updated: "问题 %{id} 已由 %{author} 更新。"
+  text_issues_ref_in_commit_messages: 在提交信息中引用和解决任务
+  text_issue_added: "任务 %{id} 已由 %{author} 提交。"
+  text_issue_updated: "任务 %{id} 已由 %{author} 更新。"
   text_wiki_destroy_confirmation: 您确定要删除这个 wiki 及其所有内容吗？
-  text_issue_category_destroy_question: "有一些问题（%{count} 个）属于此类别。您想进行哪种操作？"
-  text_issue_category_destroy_assignments: 删除问题的所属类别（问题变为无类别）
-  text_issue_category_reassign_to: 为问题选择其它类别
-  text_user_mail_option: "对于没有选中的项目，您将只会收到您跟踪或参与的项目的通知（比如说，您是问题的报告者, 或被指派解决此问题）。"
-  text_no_configuration_data: "角色、跟踪标签、问题状态和工作流程还没有设置。\n强烈建议您先载入默认设置，然后在此基础上进行修改。"
+  text_issue_category_destroy_question: "有一些任务（%{count} 个）属于此类别。您想进行哪种操作？"
+  text_issue_category_destroy_assignments: 删除任务的所属类别（任务变为无类别）
+  text_issue_category_reassign_to: 为任务选择其它类别
+  text_user_mail_option: "对于没有选中的项目，您将只会收到您跟踪或参与的项目的通知（比如说，您是任务的报告者, 或被指派解决此任务）。"
+  text_no_configuration_data: "角色、跟踪标签、任务状态和工作流程还没有设置。\n强烈建议您先载入默认设置，然后在此基础上进行修改。"
   text_load_default_configuration: 载入默认设置
   text_status_changed_by_changeset: "已应用到变更列表 %{value}."
   text_time_logged_by_changeset: "已应用到修订版本 %{value}."
-  text_issues_destroy_confirmation: '您确定要删除选中的问题吗？'
+  text_issues_destroy_confirmation: '您确定要删除选中的任务吗？'
   text_select_project_modules: '请选择此项目可以使用的模块：'
   text_default_administrator_account_changed: 默认的管理员帐号已改变
   text_file_repository_writable: 附件路径可写
   text_plugin_assets_writable: 插件的附件路径可写
   text_rmagick_available: RMagick 可用（可选的）
-  text_destroy_time_entries_question: 您要删除的问题已经上报了 %{hours} 小时的工作量。您想进行那种操作？
+  text_destroy_time_entries_question: 您要删除的任务已经上报了 %{hours} 小时的工作量。您想进行那种操作？
   text_destroy_time_entries: 删除上报的工作量
   text_assign_time_entries_to_project: 将已上报的工作量提交到项目中
-  text_reassign_time_entries: '将已上报的工作量指定到此问题：'
+  text_reassign_time_entries: '将已上报的工作量指定到此任务：'
   text_user_wrote: "%{value} 写到："
   text_enumeration_destroy_question: "%{count} 个对象被关联到了这个枚举值。"
   text_enumeration_category_reassign_to: '将它们关联到新的枚举值：'
@@ -934,7 +934,7 @@ zh:
   default_activity_design: 设计
   default_activity_development: 开发
 
-  enumeration_issue_priorities: 问题优先级
+  enumeration_issue_priorities: 任务优先级
   enumeration_doc_categories: 文档类别
   enumeration_activities: 活动（时间跟踪）
   enumeration_system_activity: 系统活动
