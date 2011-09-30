@@ -20,23 +20,23 @@
 # Settings can be defined through the application in Admin -> Settings
 
 app_title:
-  default: Redmine
+  default: 浦发个性信用卡：工作流及任务管理系统
 app_subtitle:
-  default: Project management
+  default: 工作流及任务管理系统
 welcome_text:
-  default:
+  default: 欢迎使用【浦发个性信用卡：工作流及任务管理系统】
 login_required:
-  default: 0
+  default: 1
 self_registration:
-  default: '2'
+  default: '0'
 lost_password:
   default: 1
 password_min_length:
   format: int
-  default: 4
+  default: 8
 attachment_max_size:
   format: int
-  default: 5120
+  default: 12240
 issues_export_limit:
   format: int
   default: 500
@@ -46,7 +46,7 @@ activity_days_default:
 per_page_options:
   default: '25,50,100'
 mail_from:
-  default: redmine@example.net
+  default: pcard-robot@koocaa.com
 bcc_recipients:
   default: 1
 plain_text_mail:
@@ -58,9 +58,9 @@ cache_formatted_text:
 wiki_compression:
   default: ""
 default_language:
-  default: en
+  default: zh
 host_name:
-  default: localhost:3000
+  default: pcard.koocaa.com
 protocol:
   default: http
 feeds_limit:
@@ -81,10 +81,10 @@ enabled_scm:
   serialized: true
   default: 
   - Subversion
-  - Darcs
-  - Mercurial
+  # - Darcs
+  # - Mercurial
   - Cvs
-  - Bazaar
+  # - Bazaar
   - Git
 autofetch_changesets:
   default: 1
@@ -110,14 +110,14 @@ commit_logtime_activity_id:
 # 0 means autologin is disabled 
 autologin:
   format: int
-  default: 0
+  default: 7
 # date format
 date_format:
-  default: ''
+  default: '%Y-%m-%d'
 time_format:
-  default: ''
+  default: '%H:%M'
 user_format:
-  default: :firstname_lastname
+  default: :lastname_firstname
   format: symbol
 cross_project_issue_relations:
   default: 0
@@ -143,6 +143,7 @@ issue_list_default_columns:
   - subject
   - assigned_to
   - updated_on
+  - category
 display_subprojects_issues:
   default: 1
 issue_done_ratio:
@@ -179,19 +180,18 @@ repository_log_display_limit:
   format: int
   default: 100
 ui_theme:
-  default: ''
+  default: 'basecamp'
 emails_footer:
   default: |-
-    You have received this notification because you have either subscribed to it, or are involved in it.
-    To change your notification preferences, please click here: http://hostname/my/account
+    您接收到本邮件，是由于您或者订阅了它，或者是本邮件内容与您有关。如果你需要修改邮件通知偏好，请点击这里：http://pcard.koocaa.com/my/account
 gravatar_enabled:  
-  default: 0
+  default: 1
 openid:
   default: 0
 gravatar_default:
-  default: ''
+  default: 'wavatar'
 start_of_week:
-  default: ''
+  default: '1'
 rest_api_enabled:
   default: 0
 default_notification_option:
