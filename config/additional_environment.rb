@@ -11,7 +11,4 @@
 #   ...
 #
 
-config.gem 'capistrano'
-config.gem 'capistrano-ext'
-config.gem 'mongrel_cluster'
 config.gem 'i18n', :version => '0.4.2'
