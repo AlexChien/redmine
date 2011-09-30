@@ -171,7 +171,7 @@ zh:
   notice_unable_delete_version: 无法删除版本
   notice_unable_delete_time_entry: 无法删除工时
   notice_issue_done_ratios_updated: 任务完成度已更新。
-  notice_gantt_chart_truncated: "The chart was truncated because it exceeds the maximum number of items that can be displayed (%{max})"
+  notice_gantt_chart_truncated: "由于超出了最大显示条目限制，图表无法完整显示 (%{max})"
 
   error_can_t_load_default_data: "无法载入默认设置：%{value}"
   error_scm_not_found: "版本库中不存在该条目和（或）其修订版本。"
@@ -909,8 +909,8 @@ zh:
   text_wiki_page_destroy_children: 删除子页面及其所有下级页面
   text_wiki_page_reassign_children: 将子页面的上级页面设置为
   text_own_membership_delete_confirmation: 你正在删除你现有的某些或全部权限，如果这样做了你可能将会再也无法编辑该项目了。你确定要继续吗？
-  text_zoom_in: Zoom in
-  text_zoom_out: Zoom out
+  text_zoom_in: 放大
+  text_zoom_out: 缩小
 
   default_role_manager: 管理人员
   default_role_developer: 开发人员
@@ -939,46 +939,46 @@ zh:
   enumeration_activities: 活动（时间跟踪）
   enumeration_system_activity: 系统活动
 
-  field_warn_on_leaving_unsaved: Warn me when leaving a page with unsaved text
-  text_warn_on_leaving_unsaved: The current page contains unsaved text that will be lost if you leave this page.
-  label_my_queries: My custom queries
-  text_journal_changed_no_detail: "%{label} updated"
-  label_news_comment_added: Comment added to a news
-  button_expand_all: Expand all
-  button_collapse_all: Collapse all
-  label_additional_workflow_transitions_for_assignee: Additional transitions allowed when the user is the assignee
-  label_additional_workflow_transitions_for_author: Additional transitions allowed when the user is the author
-  label_bulk_edit_selected_time_entries: Bulk edit selected time entries
-  text_time_entries_destroy_confirmation: Are you sure you want to delete the selected time entr(y/ies)?
-  label_role_anonymous: Anonymous
-  label_role_non_member: Non member
-  label_issue_note_added: Note added
-  label_issue_status_updated: Status updated
-  label_issue_priority_updated: Priority updated
-  label_issues_visibility_own: Issues created by or assigned to the user
-  field_issues_visibility: Issues visibility
-  label_issues_visibility_all: All issues
-  permission_set_own_issues_private: Set own issues public or private
-  field_is_private: Private
-  permission_set_issues_private: Set issues public or private
-  label_issues_visibility_public: All non private issues
-  text_issues_destroy_descendants_confirmation: This will also delete %{count} subtask(s).
+  field_warn_on_leaving_unsaved: 在离开页面有未保存工作时，请警告我
+  text_warn_on_leaving_unsaved: 当前页面有未保存内容，如果离开则将丢失所有未保存的更改.
+  label_my_queries: 我的自定义查询
+  text_journal_changed_no_detail: "%{label} 已更新"
+  label_news_comment_added: 评论已添加到新闻
+  button_expand_all: 全部展开
+  button_collapse_all: 全部收起
+  label_additional_workflow_transitions_for_assignee: 当用户是任务被指派人时允许的额外状态变迁
+  label_additional_workflow_transitions_for_author: 当用户是任务发起人时允许的额外状态变迁
+  label_bulk_edit_selected_time_entries: 批量修改选中的条目
+  text_time_entries_destroy_confirmation: 你确定要删除选中的条目么？
+  label_role_anonymous: 访客
+  label_role_non_member: 登录成员
+  label_issue_note_added: 备注已添加
+  label_issue_status_updated: 状态已更新
+  label_issue_priority_updated: 优先级已更新
+  label_issues_visibility_own: 由用户创建或指派给用户的任务
+  field_issues_visibility: 任务可见性
+  label_issues_visibility_all: 所有任务
+  permission_set_own_issues_private: 设置自己的任务为公开或私有
+  field_is_private: 私有
+  permission_set_issues_private: 设置任务为公开或私有
+  label_issues_visibility_public: 所有非私有任务
+  text_issues_destroy_descendants_confirmation: 这也将同时删除 %{count} 条子任务。
 
   field_commit_logs_encoding: 提交注释的编码
-  field_scm_path_encoding: Path encoding
-  text_scm_path_encoding_note: "Default: UTF-8"
-  field_path_to_repository: Path to repository
-  field_root_directory: Root directory
-  field_cvs_module: Module
+  field_scm_path_encoding: 路径编码
+  text_scm_path_encoding_note: "默认: UTF-8"
+  field_path_to_repository: 代码库路径
+  field_root_directory: 根目录
+  field_cvs_module: 模块
   field_cvsroot: CVSROOT
-  text_mercurial_repository_note: Local repository (e.g. /hgrepo, c:\hgrepo)
+  text_mercurial_repository_note: 本地代码看 (例如： /hgrepo, c:\hgrepo)
   text_scm_command: Command
-  text_scm_command_version: Version
-  label_git_report_last_commit: Report last commit for files and directories
-  text_scm_config: You can configure your scm commands in config/configuration.yml. Please restart the application after editing it.
-  text_scm_command_not_available: Scm command is not available. Please check settings on the administration panel.
-  notice_issue_successful_create: Issue %{id} created.
+  text_scm_command_version: 版本
+  label_git_report_last_commit: 报告最近提交的文件及目录
+  text_scm_config: 请在config/configuration.yml中配置您的SCM命令信息并重新启动以使其生效。
+  text_scm_command_not_available: SCM版本管理命令不可用。请在管理面板中检查设置.
+  notice_issue_successful_create: 任务 %{id} 创建成功.
   label_between: between
-  setting_issue_group_assignment: Allow issue assignment to groups
+  setting_issue_group_assignment: 允许向组指派任务
   label_diff: diff
-  text_git_repository_note: Repository is bare and local (e.g. /gitrepo, c:\gitrepo)
+  text_git_repository_note: 本地版本库 (例如： /gitrepo, c:\gitrepo)
