@@ -1,5 +1,5 @@
 set :application, "pcard"
-set :deploy_to, " /var/www/channely.cn/#{application}"
+set :deploy_to, "/var/www/channely.cn/#{application}"
 #set :use_sudo, true
 set :use_sudo, false
 set :user, "runner"
