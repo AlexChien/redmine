@@ -43,8 +43,9 @@ Rails::Initializer.run do |config|
   config.active_record.observers = :message_observer, :issue_observer, :journal_observer, :news_observer, :document_observer, :wiki_content_observer, :comment_observer
 
   # Make Active Record use UTC-base instead of local time
-  # config.active_record.default_timezone = :utc
-
+  # config.active_record.default_timezone = "Beijing"
+  # do not enable timezone, it will raise localtime not defined error
+  
   # Use Active Record's schema dumper instead of SQL when creating the test database
   # (enables use of different database adapters for development and test environments)
   # config.active_record.schema_format = :ruby
