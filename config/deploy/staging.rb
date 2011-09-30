@@ -53,7 +53,7 @@ set :mongrel_user, "runner"
 namespace :deploy do
   desc "Generate database.yml and Create asset packages for production, minify and compress js and css files"
   after "deploy:update_code", :roles => [:web] do
-    database_yml
+    config_yml
     # app_config
     # asset_packager
   end
@@ -76,9 +76,10 @@ namespace :deploy do
   end
 
   desc "Generate Production database.yml"
-  task :database_yml, :roles => [:web] do
+  task :config_yml, :roles => [:web] do
     db_config = "#{shared_path}/config/database.yml.production"
-    run "cp #{db_config} #{release_path}/config/database.yml"
+    run "cp #{db_config} #{current_path}/config/database.yml"
+    run "cp #{shared_path}/config/configuration.yml.production #{current_path}/config/configuration.yml"
   end
 
   desc "Create asset packages for production, minify and compress js and css files"
