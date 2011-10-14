@@ -5,16 +5,20 @@
 <META NAME="Author" CONTENT="Alex Chien, alex.chien@koocaa.com">
 <title>浦发个性信用卡制卡任务交互协议</title>
 <style type="text/css" media="screen">
-	pre {padding:10px;border:1px #333 solid; background:#eeeeee;}
+pre {
+	padding:10px;
+	border:1px #333 solid;
+	background:#eeeeee;
+}
 </style>
 </head>
 
 <body>
 <h1>浦发个性信用卡制卡任务交互协议 （建议稿）</h1>
 <p>Drafted by: Alex Chien<br />
-  Version: 0.8<br />
+  Version: 1.0<br />
   Last Modified at: 
-    <!-- #BeginDate format:Am3m -->10/14/2011  2:45<!-- #EndDate -->
+  <!-- #BeginDate format:Am3m -->10/14/2011  15:43<!-- #EndDate --> 
 </p>
 <h2>文件交换方式</h2>
 <p>VP放提供SFTP服务器，并提供卡中心访问帐号。SFTP服务器上提供2个目录, incoming 及 output，卡中心对这两个目录具有读写权利。</p>
@@ -35,25 +39,25 @@
   <li>各类报告：各类日报、周报、月报文件。</li>
 </ul>
 <h2>文件编码规则</h2>
-<h3>任务文件（卡中心-&gt;VP）
-</h3>
+<h3>任务文件（卡中心-&gt;VP） </h3>
 <p>所在目录：sftp/incoming/</p>
 <p>卡中心向VP传送任务文件时，需包含以下信息，将这些信息进行序列化（简单的值字串拼合）后进行传递。序列化信息由以下几个部分组成：</p>
 <ul>
   <li>唯一编码</li>
   <li>任务信息</li>
   <li>Promotion ID</li>
+  <li>Fee Code</li>
   <li>时间戳</li>
 </ul>
 <table border="1" cellspacing="5" cellpadding="5">
   <tr>
     <td nowrap="nowrap">分组</td>
     <td nowrap="nowrap">名称</td>
-    <td>数据长度</td>
-    <td>示例</td>
-    <td>类型</td>
-    <td>可选？</td>
-    <td>备注</td>
+    <td nowrap="nowrap">数据长度</td>
+    <td nowrap="nowrap">示例</td>
+    <td nowrap="nowrap">类型</td>
+    <td nowrap="nowrap">可选？</td>
+    <td nowrap="nowrap">备注</td>
   </tr>
   <tr>
     <td rowspan="2" nowrap="nowrap">唯一编码</td>
@@ -115,6 +119,15 @@
     <td>横版、竖版</td>
   </tr>
   <tr>
+    <td nowrap="nowrap">Fee Code</td>
+    <td nowrap="nowrap"><a href="#FeeCode">应费代码</a></td>
+    <td>2</td>
+    <td>01</td>
+    <td>枚举值</td>
+    <td>是</td>
+    <td>应费代码</td>
+  </tr>
+  <tr>
     <td nowrap="nowrap">时间戳</td>
     <td nowrap="nowrap">时间戳</td>
     <td>10</td>
@@ -129,7 +142,7 @@
   任务类型为审核状态更新时：Promotion ID字段可选<br />
   任务类型为换卡换图时：所有字段必填 <br />
   任务类型为换卡不换图时：Promotion ID字段可选</p>
-<p>当字段为可选且不必要提供数据时，需要以0补全该字段长度位数进行占位。序列化后文件名长度 35 定长。</p>
+<p>当字段为可选且不必要提供数据时，需要以0补全该字段长度位数进行占位。序列化后文件名长度 37 定长。</p>
 <p><strong>示例：</strong></p>
 <p>新卡申请任务</p>
 <table border="1" cellspacing="5" cellpadding="5">
@@ -161,6 +174,11 @@
     <td>10</td>
   </tr>
   <tr>
+    <td>Fee Code</td>
+    <td><a href="#FeeCode">Fee Code</a></td>
+    <td>01</td>
+  </tr>
+  <tr>
     <td>时间戳</td>
     <td>时间戳</td>
     <td>2011-10-11 22:58:04</td>
@@ -173,7 +191,7 @@
   <tr>
     <td>&nbsp;</td>
     <td>序列化文件名</td>
-    <td>18621683324120210100101101318345084.jpg</td>
+    <td>1862168332412021010010110011318345084.jpg</td>
   </tr>
 </table>
 <p>审核状态更新任务</p>
@@ -206,6 +224,11 @@
     <td>不变</td>
   </tr>
   <tr>
+    <td>Fee Code</td>
+    <td><a href="#FeeCode">Fee Code</a></td>
+    <td>01</td>
+  </tr>
+  <tr>
     <td>时间戳</td>
     <td>时间戳</td>
     <td>2011-10-12 2:58:04</td>
@@ -218,7 +241,7 @@
   <tr>
     <td>&nbsp;</td>
     <td>序列化文件名</td>
-    <td>18621683324120290200000001318359484</td>
+    <td>1862168332412029020000000011318359484</td>
   </tr>
   <tr>
     <td>&nbsp;</td>
@@ -256,6 +279,11 @@
     <td>01</td>
   </tr>
   <tr>
+    <td>Fee Code</td>
+    <td><a href="#FeeCode">Fee Code</a></td>
+    <td>01</td>
+  </tr>
+  <tr>
     <td>时间戳</td>
     <td>时间戳</td>
     <td>2011-10-12 2:58:04</td>
@@ -268,7 +296,7 @@
   <tr>
     <td>&nbsp;</td>
     <td>序列化文件名</td>
-    <td>18621683324120290300203011318359484.jpg</td>
+    <td>1862168332412029030020301011318359484.jpg</td>
   </tr>
 </table>
 <p>换卡不换图任务</p>
@@ -301,6 +329,11 @@
     <td>01</td>
   </tr>
   <tr>
+    <td>Fee Code</td>
+    <td><a href="#FeeCode">Fee Code</a></td>
+    <td>01</td>
+  </tr>
+  <tr>
     <td>时间戳</td>
     <td>时间戳</td>
     <td>2011-10-12 2:58:04</td>
@@ -313,7 +346,7 @@
   <tr>
     <td>&nbsp;</td>
     <td>序列化文件名</td>
-    <td>18621683324120290400203011318359484</td>
+    <td>1862168332412029040020301011318359484</td>
   </tr>
   <tr>
     <td>&nbsp;</td>
@@ -327,10 +360,10 @@
 <p>举例：2011年10月12日任务清单，文件名为 1318348800.txt</p>
 <p>文件内容示例</p>
 <pre>
-18621683324120210100101101318345084.jpg
-18621683324120290200000001318359484
-18621683324120290300203011318359484.jpg
-18621683324120290400203011318359484
+1862168332412021010010110011318345084.jpg
+1862168332412029020000000011318359484
+1862168332412029030020301011318359484.jpg
+1862168332412029040020301011318359484
 </pre>
 <h3>任务抓取回执（VP-&gt;卡中心）</h3>
 <p>所在目录：sftp/output/</p>
@@ -338,10 +371,10 @@
 <p>举例：2011年10月12日任务回执，文件名为 1318348800.txt</p>
 <p>文件内容示例</p>
 <pre>
-18621683324120210100101101318345084.jpg	OK	
-18621683324120290200000001318359484	OK	
-18621683324120290300203011318359484.jpg	FAILED	图片文件损坏
-18621683324120290400203011318359484	OK	
+1862168332412021010010110011318345084.jpg	OK	
+1862168332412029020000000011318359484	OK	
+1862168332412029030020301011318359484.jpg	FAILED	图片文件损坏
+1862168332412029040020301011318359484	OK	
 </pre>
 <h3>任务反馈文件（VP-&gt;卡中心）</h3>
 <p>所在目录：sftp/output/</p>
@@ -350,6 +383,7 @@
   <li>唯一编码</li>
   <li>任务信息</li>
   <li>Promotion ID</li>
+  <li>Fee Code</li>
   <li>时间戳</li>
 </ul>
 <p>字段设置基本与卡中心发来的任务文件相似，但多了一个任务状态字段信息。如果发生制图失败或者图片审核失败时，失败原因文字描述则写入文件内容（失败时，并无成果图片可以提交，所以返回的都是文本文件，为了规范统一，失败时任务反馈文件无后缀名，但可以当成文本文件进行读取）。</p>
@@ -431,6 +465,15 @@
     <td>返回任务当前状态值，可做冗余校验，亦可忽略</td>
   </tr>
   <tr>
+    <td nowrap="nowrap">Fee Code</td>
+    <td nowrap="nowrap"><a href="#FeeCode">应费代码</a></td>
+    <td>2</td>
+    <td>01</td>
+    <td>枚举值</td>
+    <td>是</td>
+    <td>应费代码</td>
+  </tr>
+  <tr>
     <td nowrap="nowrap">时间戳</td>
     <td nowrap="nowrap">时间戳</td>
     <td>10</td>
@@ -451,7 +494,7 @@
 </table>
 <p> <strong>字段可选条件</strong></p>
 <p>除唯一编码、任务状态、时间戳具有关键意义外，其余字段皆返回当前系统中任务所处状态。卡中心可对其进行冗余校验，也可抛弃不予处理。</p>
-<p>当字段为可选且不必要提供数据时，需要以0补全该字段长度位数进行占位。序列化后文件名长度 37 定长。</p>
+<p>当字段为可选且不必要提供数据时，需要以0补全该字段长度位数进行占位。序列化后文件名长度 39 定长。</p>
 <p><strong>示例：</strong></p>
 <p>制图成功任务反馈</p>
 <table border="1" cellspacing="5" cellpadding="5">
@@ -487,6 +530,11 @@
     <td>01</td>
   </tr>
   <tr>
+    <td>Fee Code</td>
+    <td><a href="#FeeCode">Fee Code</a></td>
+    <td>01</td>
+  </tr>
+  <tr>
     <td>时间戳</td>
     <td>时间戳</td>
     <td>2011-10-11 22:58:04</td>
@@ -499,7 +547,7 @@
   <tr>
     <td>&nbsp;</td>
     <td>序列化文件名</td>
-    <td>1862168332412021090100203011318345084.jpg</td>
+    <td>186216833241202109010020301011318345084.jpg</td>
   </tr>
   <tr>
     <td>&nbsp;</td>
@@ -541,6 +589,11 @@
     <td>01</td>
   </tr>
   <tr>
+    <td>Fee Code</td>
+    <td><a href="#FeeCode">Fee Code</a></td>
+    <td>01</td>
+  </tr>
+  <tr>
     <td>时间戳</td>
     <td>时间戳</td>
     <td>2011-10-11 22:58:04</td>
@@ -558,7 +611,7 @@
   <tr>
     <td>&nbsp;</td>
     <td>序列化文件名</td>
-    <td>1862168332412026090100203011318345084.jpg</td>
+    <td>186216833241202609010020301011318345084.jpg</td>
   </tr>
   <tr>
     <td>&nbsp;</td>
@@ -772,6 +825,22 @@
     <td>制图失败</td>
   </tr>
 </table>
+<p><a name="FeeCode" id="FeeCode"></a>Fee Code</p>
+<table border="1" cellspacing="5" cellpadding="5">
+  <tr>
+    <td>ID</td>
+    <td>含义</td>
+  </tr>
+  <tr>
+    <td>01</td>
+    <td>Fee Code 1</td>
+  </tr>
+  <tr>
+    <td>02</td>
+    <td>Fee Code 2</td>
+  </tr>
+</table>
+<p>&nbsp;</p>
 <h2>VP系统流程图</h2>
 <p><img src="流程.png" width="564" height="1185" alt="VP系统流程图" /></p>
 <p>&nbsp;</p>
