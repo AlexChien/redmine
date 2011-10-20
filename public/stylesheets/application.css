@@ -58,6 +58,7 @@ h4, .wiki h3 {font-size: 13px;padding: 2px 10px 1px 0px;margin-bottom: 5px; bord
 #admin-menu a.groups { background-image: url(../images/group.png); }
 #admin-menu a.roles { background-image: url(../images/database_key.png); }
 #admin-menu a.trackers { background-image: url(../images/ticket.png); }
+#admin-menu a.designs { background-image: url(../images/apple.png); }
 #admin-menu a.issue_statuses { background-image: url(../images/ticket_edit.png); }
 #admin-menu a.workflows { background-image: url(../images/ticket_go.png); }
 #admin-menu a.custom_fields { background-image: url(../images/textfield.png); }

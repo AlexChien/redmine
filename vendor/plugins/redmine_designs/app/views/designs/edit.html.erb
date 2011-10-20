@@ -1,0 +1,6 @@
+<h2><%= link_to "设计效果", :action => 'index' %> &#187; <%=h @design.name %></h2>
+
+<% form_for (@design), :builder => TabularFormBuilder do |f| %>
+<%= render :partial => 'form', :locals => { :f => f } %>
+<%= f.submit l(:button_save) %>
+<% end %>

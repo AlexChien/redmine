@@ -1,0 +1,7 @@
+<%= error_messages_for :design %>
+
+<div class="box tabular">
+	<p><%= f.text_field :code, :required => true, :label=>"设计效果ID" %></p>
+	<p><%= f.text_field :name, :required => true, :label=>"名称" %></p>
+	<p><%= f.select :tracker_id, Tracker.all.collect {|c| [ c.name, c.id ] }, :required => true, :label=>"设计类型" %></p>
+</div>

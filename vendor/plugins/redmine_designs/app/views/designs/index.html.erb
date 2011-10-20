@@ -1,0 +1,31 @@
+<div class="contextual">
+<%= link_to "新建设计效果", {:action => 'new'}, :class => 'icon icon-add' %>
+</div>
+
+<h2>设计效果</h2>
+
+<table class="list">
+	<thead><tr>
+		<th>设计效果ID</th>
+		<th>名称</th>
+		<th>设计类型</th>
+		<th></th>
+	</tr></thead>
+	<tbody>
+		<% for design in @designs %>
+		<tr class="<%= cycle("odd", "even") %>">
+			<td align="center"><%= link_to h(design.code), :action => 'edit', :id => design %></td>
+			<td align="center"><%= link_to h(design.name), :action => 'edit', :id => design %></td>
+			<td align="center"><%= h(design.tracker.name) %></td>
+			<td class="buttons">
+				<%= link_to(l(:button_delete), { :action => 'destroy', :id => design },
+				:method => :post,
+				:confirm => l(:text_are_you_sure),
+				:class => 'icon icon-del') %>
+			</td>
+		</tr>
+		<% end %>
+	</tbody>
+</table>
+
+<% html_title(l(:label_tracker_plural)) -%>

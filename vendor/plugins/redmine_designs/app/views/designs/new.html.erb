@@ -1,0 +1,9 @@
+<h2><%= link_to "设计效果", :action => 'index' %> &#187; 新建设计效果</h2>
+
+<% form_for(@design, :url => { :action => 'create' }, :builder => TabularFormBuilder) do |f| %>
+<%= render :partial => 'form', :locals => { :f => f } %>
+<p>
+	<%= f.submit l(:button_create) %>
+	<%= f.submit l(:button_create_and_continue), :name => 'continue' %>
+</p>
+<% end %>
