@@ -7,6 +7,7 @@
 
 <table class="list">
   <thead><tr>
+  <th>代码ID</th>
   <th><%=l(:field_status)%></th>
   <% if Issue.use_status_for_done_ratio? %>
   <th><%=l(:field_done_ratio)%></th>
@@ -19,7 +20,8 @@
   <tbody>
 <% for status in @issue_statuses %>
   <tr class="<%= cycle("odd", "even") %>">
-  <td><%= link_to h(status.name), :action => 'edit', :id => status %></td>
+  <td align="center"><%= link_to h(status.code), :action => 'edit', :id => status %></td>
+  <td align="center"><%= link_to h(status.name), :action => 'edit', :id => status %></td>
   <% if Issue.use_status_for_done_ratio? %>
   <td align="center"><%= h status.default_done_ratio %></td>
   <% end %>

@@ -22,10 +22,11 @@ class IssueStatus < ActiveRecord::Base
 
   before_destroy :delete_workflows
 
-  validates_presence_of :name
-  validates_uniqueness_of :name
+  validates_presence_of :name,:code
+  validates_uniqueness_of :name,:code
   validates_length_of :name, :maximum => 30
   validates_inclusion_of :default_done_ratio, :in => 0..100, :allow_nil => true
+  validates_format_of :code, :with => /^\d{2}$/, :message => "不符合规则"
 
   named_scope :named, lambda {|arg| { :conditions => ["LOWER(#{table_name}.name) = LOWER(?)", arg.to_s.strip]}}
 

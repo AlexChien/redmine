@@ -307,7 +307,7 @@ zh:
   field_assigned_to_role: 角色的成员
   field_text: 文本字段
   field_visible: 可见的
-  field_code: 设计效果ID
+  field_code: 代码ID
   field_tracker: 设计类型
 
   setting_app_title: 应用程序标题

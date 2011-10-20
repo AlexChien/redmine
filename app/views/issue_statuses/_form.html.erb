@@ -2,6 +2,8 @@
 
 <div class="box">
 <!--[form:issue_status]-->
+<p><label for="issue_status_code">代码ID<span class="required"> *</span></label>
+<%= text_field 'issue_status', 'code'  %></p>
 <p><label for="issue_status_name"><%=l(:field_name)%><span class="required"> *</span></label>
 <%= text_field 'issue_status', 'name'  %></p>
 

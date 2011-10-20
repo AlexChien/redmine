@@ -3,7 +3,7 @@ class Design < ActiveRecord::Base
   belongs_to :tracker
   
   validates_presence_of :code, :name, :tracker_id
-  validates_format_of :code, :with => /\d{2}/, :message => "设计效果ID不符合规则"
+  validates_format_of :code, :with => /^\d{2}$/, :message => "不符合规则"
   validate :uniqueness_code
   
   named_scope :in_code, lambda {|code|
