@@ -198,3 +198,5 @@ default_notification_option:
   default: 'only_my_events'
 emails_header:
   default: ''
+spdcc_path:
+  default: '/Users/lijian/spdcc'
