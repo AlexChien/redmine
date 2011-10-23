@@ -36,6 +36,10 @@ class Tracker < ActiveRecord::Base
 
   named_scope :named, lambda {|arg| { :conditions => ["LOWER(#{table_name}.name) = LOWER(?)", arg.to_s.strip]}}
 
+  named_scope :in_code, lambda {|code|
+    {:conditions => ["trackers.code in (?)", code]}
+  }
+
   def to_s; name end
 
   def <=>(tracker)

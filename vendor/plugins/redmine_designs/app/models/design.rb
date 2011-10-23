@@ -1,6 +1,7 @@
 class Design < ActiveRecord::Base
   unloadable
   belongs_to :tracker
+  has_many :issues
   
   validates_presence_of :code, :name, :tracker_id
   validates_format_of :code, :with => /^\d{2}$/, :message => "不符合规则"

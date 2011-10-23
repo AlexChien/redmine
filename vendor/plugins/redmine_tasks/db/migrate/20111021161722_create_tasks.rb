@@ -12,6 +12,7 @@ class CreateTasks < ActiveRecord::Migration
       t.string :fee_code, :null => false, :limit => 2
       t.string :tasked_at, :null => false, :limit => 10
       t.string :file_name, :null => false
+      t.timestamps
     end
   end
 

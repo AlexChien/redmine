@@ -1,5 +1,6 @@
 class AddIssueColumns < ActiveRecord::Migration
   def self.up
+    add_column :issues, :design_id, :integer, :null => false
     add_column :issues, :code, :string, :null => false, :limit => 15
     add_column :issues, :approve_status, :string, :null => false, :limit => 2
     add_column :issues, :task_type, :string, :null => false, :limit => 2
@@ -12,6 +13,7 @@ class AddIssueColumns < ActiveRecord::Migration
   end
 
   def self.down
+    remove_column  :issues, :design_id
     remove_column  :issues, :code
     remove_column  :issues, :approve_status
     remove_column  :issues, :task_type

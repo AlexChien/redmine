@@ -20,6 +20,7 @@ class Issue < ActiveRecord::Base
 
   belongs_to :project
   belongs_to :tracker
+  belongs_to :design
   belongs_to :status, :class_name => 'IssueStatus', :foreign_key => 'status_id'
   belongs_to :author, :class_name => 'User', :foreign_key => 'author_id'
   belongs_to :assigned_to, :class_name => 'Principal', :foreign_key => 'assigned_to_id'
@@ -54,6 +55,8 @@ class Issue < ActiveRecord::Base
   attr_reader :current_journal
 
   validates_presence_of :subject, :priority, :project, :tracker, :author, :status
+  validates_presence_of :code, :approve_status, :task_type, :design_type,
+                        :design_effect, :style_effect, :fee_code, :tasked_at
 
   validates_length_of :subject, :maximum => 255
   validates_inclusion_of :done_ratio, :in => 0..100
@@ -79,6 +82,10 @@ class Issue < ActiveRecord::Base
     {
       :conditions => Query.merge_conditions(query.statement)
     }
+  }
+  
+  named_scope :in_code, lambda {|code|
+    {:conditions => ["issues.code in (?)", code]}
   }
 
   before_create :default_assign
@@ -955,5 +962,53 @@ class Issue < ActiveRecord::Base
                                                 and #{Issue.table_name}.project_id=#{Project.table_name}.id
                                                 and #{visible_condition(User.current, :project => project)}
                                               group by s.id, s.is_closed, j.id")
+  end
+  
+  def show_approve_status
+    case self.approve_status
+    when "10"
+      "录入"
+    when "20"
+      "文件审核"
+    when "30"
+      "补件"
+    when "40"
+      "潜在风险"
+    when "50"
+      "异常申请"
+    when "60"
+      "信用审核"
+    when "70"
+      "拒绝"
+    when "80"
+      "取消"
+    when "90"
+      "已核准"
+    when "99"
+      "已生产卡片"
+    else
+      "未知"
+    end
+  end
+  
+  def show_task_type
+  end
+  
+  def show_design_type
+  end
+  
+  def show_design_effect
+  end
+  
+  def show_style_effect
+  end
+  
+  def show_fee_code
+  end
+  
+  def show_tasked_at
+  end
+  
+  def show_source
   end
 end
