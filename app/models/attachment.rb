@@ -78,6 +78,7 @@ class Attachment < ActiveRecord::Base
   # and computes its MD5 hash
   def files_to_final_location
     if @temp_file && (@temp_file.size > 0)
+      puts @temp_file.read(8192)
       logger.info("Saving attachment '#{self.diskfile}' (#{@temp_file.size} bytes)")
       md5 = Digest::MD5.new
       File.open(diskfile, "wb") do |f|

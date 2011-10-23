@@ -91,7 +91,14 @@ class Task < ActiveRecord::Base
                               :source=>1)
                 if i.save!
                   if t.file_name.match(/\./)
-                    #file
+                    attachment = Attachment.new(:author=>User.find(1),
+                                                :container=>i,
+                                                :filename=>t.file_name,
+                                                :disk_filename=>Attachment.disk_filename(t.file_name),
+                                                :content_type=>Redmine::MimeType.of(t.file_name),
+                                                :filesize=>File.size("#{INCOMING}/#{t.file_name}"))
+                    FileUtils.copy("#{INCOMING}/#{t.file_name}","#{Attachment.storage_path}/#{Attachment.disk_filename(t.file_name)}")
+                    attachment.save!
                   end
                 else
                   print_error(i.errors.full_messages.join("\n"))
