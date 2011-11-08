@@ -26,7 +26,7 @@ class IssueStatus < ActiveRecord::Base
   validates_uniqueness_of :name,:code
   validates_length_of :name, :maximum => 30
   validates_inclusion_of :default_done_ratio, :in => 0..100, :allow_nil => true
-  validates_format_of :code, :with => /^\d{2}$/, :message => "不符合规则"
+  validates_format_of :code, :with => /^VP\d{2}$/, :message => "不符合规则"
 
   named_scope :named, lambda {|arg| { :conditions => ["LOWER(#{table_name}.name) = LOWER(?)", arg.to_s.strip]}}
 

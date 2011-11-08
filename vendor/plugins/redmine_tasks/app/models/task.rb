@@ -15,7 +15,7 @@ class Task < ActiveRecord::Base
   validates_format_of :fee_code, :with => /^01|02$/
   validates_format_of :tasked_at, :with => /^\d{10}$/
   validate :check_task_type, :check_design_type, :check_design_effect, :check_style_effect
-  
+    
   named_scope :in_code, lambda {|code|
     {:conditions => ["tasks.code in (?)", code]}
   }
@@ -33,6 +33,17 @@ class Task < ActiveRecord::Base
   FAILED = "#{Setting.spdcc_path}/failed"
   SUCCESS = "#{Setting.spdcc_path}/success"
   OUTPUT_BK = "#{Setting.spdcc_path}/output_bk"
+  
+  TASK_TYPES = {
+    ' ' => '新卡申请',
+    '0' => '换卡换图',
+    '1' => '换卡不换图'
+  }
+  
+  LAYOUTS = {
+    '1' => '横版',
+    '2' => '竖版'
+  }
 
   def self.parse_task
     logger.info "******************** parsing ********************"
