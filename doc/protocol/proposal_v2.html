@@ -1,0 +1,1206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<META NAME="Author" CONTENT="Alex Chien, alex.chien@koocaa.com">
+<title>浦发个性信用卡制卡任务交互协议</title>
+<style type="text/css" media="all">
+#fe_table tr.spdcc2vp td{
+	background-color:#eeeeee;
+}
+pre {
+	padding:10px;
+	border:1px #333 solid;
+	background:#eeeeee;
+}
+.close_won{color:green;}
+.close_lost {color:red;}
+</style>
+</head>
+
+<body>
+<h1>浦发个性信用卡制卡任务交互协议 （修订稿）</h1>
+<p>Drafted by: Alex Chien<br />
+  Participants: Gloria, Amy, Danqing, Xiaomei, Zack<br />
+  Version: 2.0<br />
+  Last Modified at: 
+  <!-- #BeginDate format:Am3m -->11/05/2011  23:52<!-- #EndDate --> 
+</p>
+<h1>索引</h1>
+<ul>
+  <li><a href="#sftp">文件交换方式</a></li>
+  <li><a href="#Term">术语定义</a></li>
+  <li><a href="#ExchangeOverview">数据交换概述</a></li>
+  <li><a href="#EncodingProtocal">文件编码规则</a></li>
+  <li><a href="#CloseTask">任务的结束</a></li>
+  <li><a href="#enum">附录：枚举值</a></li>
+  <li><a href="#VPChart">附录：VP系统流程图</a></li>
+</ul>
+<hr />
+<h2><a name="sftp" id="sftp"></a>文件交换方式</h2>
+<p>VP放提供SFTP服务器，并提供浦发访问帐号。SFTP服务器上提供2个目录, incoming 及 output，浦发对这两个目录具有读写权利。</p>
+<p>incoming: 浦发发送给VP的卡制作相关物料文件、清单保存在此目录 <br />
+  output: VP向浦发提交的卡制作物料、回执、报告保存在此目录。浦发完成读取后，可清空文件夹。</p>
+<p><img src="sftp.png" width="496" height="394" alt="SFTP 目录结构" /></p>
+<hr />
+<h2><a name="Term" id="Term"></a>术语定义</h2>
+<p><strong>唯一编码</strong>：唯一编码是识别客户的唯一标识，共计26位，由11位手机号＋4位生日月日＋11位占位半角空格构成。其中有效字段长15位。在数据交互时，应用唯一编码时图片文件命名编码使用15位有效唯一编码；其他文本文件及报告中均使用26位唯一编码（含半角空格占位符，但状态变更任务清单除外）。</p>
+<table border="1" cellspacing="5" cellpadding="5">
+  <tr>
+    <td>&nbsp;</td>
+    <td nowrap="nowrap">名称</td>
+    <td>数据长度</td>
+    <td>示例</td>
+    <td>备注</td>
+  </tr>
+  <tr>
+    <td rowspan="3">唯一编码</td>
+    <td nowrap="nowrap">手机号</td>
+    <td>11</td>
+    <td>18621683382</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">生日月日</td>
+    <td>4</td>
+    <td>1202</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">占位符</td>
+    <td>11</td>
+    <td>&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;</td>
+    <td>&not; 代表半角空格</td>
+  </tr>
+  <tr>
+    <td>示例</td>
+    <td colspan="4" nowrap="nowrap">文本文件中引用：186216833821202&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;<br />
+      图片命名中引用：186216833821202</td>
+  </tr>
+</table>
+<p><strong>Promotion ID</strong>：是区分可供客户选择的四种大类设计方式、7种设计要求、不同提交图片的渠道（网上提交、实物提交）。Promotion ID也在VP制图成本清算报表中有识别不同计价方式的作用。由3个字段信息构成。定长6位</p>
+<table border="1" cellspacing="5" cellpadding="5">
+  <tr>
+    <td>&nbsp;</td>
+    <td nowrap="nowrap">名称</td>
+    <td>数据长度</td>
+    <td>示例</td>
+    <td>备注</td>
+  </tr>
+  <tr>
+    <td rowspan="3">Promotion ID</td>
+    <td nowrap="nowrap"><a href="#source">来源标记</a></td>
+    <td>2</td>
+    <td>88</td>
+    <td>网站上传或实物照片</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap"><a href="#DesignType">设计类型</a></td>
+    <td>2</td>
+    <td>01</td>
+    <td>手绘Q图版、场景版等</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap"><a href="#DesignStyle">设计效果</a></td>
+    <td>2</td>
+    <td>02</td>
+    <td>设计类型下具体的设计效果，如手绘Q图版下的卡通彩色，见附录，图库、场景版时设计效果固定00。</td>
+  </tr>
+  <tr>
+    <td>示例</td>
+    <td colspan="4" nowrap="nowrap">880102 （含义：客户从网站上传图片，制作要求手绘Q图卡通黑白）</td>
+  </tr>
+</table>
+<p><strong>Fee Code</strong>：系统保留字，2位定长，任意类型。如无信息，以半角空格占位。一期中暂作为留空，今后可以根据指定规则，自动生成对于Promotion ID的费用标志。</p>
+<p><strong>版面格式编号：</strong>是识别客户选择横板或者竖版的标志。1为横板，2为竖版。</p>
+<p><strong>图库图片编号：</strong>是指当客户选择一大类设计方式（主要是场景背景和图库自选）中有多个图片可供选择的情况下，识别客户选择的编号。</p>
+<p><strong>制图图片文件</strong>： </p>
+<ul>
+  <li>是指浦发卡中心向VP传输客户原始图片的文件名称，由浦发卡中心网站系统产生后上传服务器，由VP抓取留档。</li>
+  <li>初始图片文件名编码的总位数为24位，其中包括15位唯一编码＋6位Promotion ID+1位版面格式编号＋2位图库图片编号。</li>
+</ul>
+<p><strong>终稿图片文件名编码</strong></p>
+<ul>
+  <li>是指VP向浦发卡中心传输的经过处理后的制卡文件图片文件名称，由VP系统产生后上传服务器，有浦发抓取后传输卡厂。</li>
+  <li>终稿图片文件名编号总位数是16位，其中包括15位唯一编码＋1位版面格式编号。</li>
+</ul>
+<p><strong>信息编码（或称：卡片获批可制图工单码）</strong></p>
+<ul>
+  <li>是指由浦发系统产生的代表卡片获得批准，可以开始制图的那些客户工单识别码。</li>
+  <li>信息编码总位数为26位，包括15位唯一编号＋11位半角空格。</li>
+</ul>
+<hr />
+<h2><a name="ExchangeOverview" id="ExchangeOverview"></a>数据交换概述</h2>
+<p>浦发通过SFTP向VP系统投递制图图片文件、卡片获批可制图工单文件进行任务通知。VP系统根据收到的任务需求进行审核及后续制图，并提交终稿图片文件清单（附带终稿图片文件）、制图失败工单报表 、卡片获批可制图工单任务状态更新文件，以及各类报表（日、周、月）。</p>
+<p>浦发数据投递至 incoming 目录，VP处理完数据后将清空该目录；VP返回的数据投递至 output 目录，由浦发定时取回（成功取回后删除文件）。</p>
+<!--
+<p>浦发-&gt;VP：</p>
+<ol>
+  <li><a href="#TaskPic">制图图片文件</a>：客户提供的（或通过网站上传，或通过实物照片提交）的原始图片，供VP制图使用。文件名进过编码嵌入唯一编码、Promotion ID及版式代码。每日不定时多次投递。</li>
+  <li><a href="#SKTWAIT">卡片获批可制图工单文件</a>：通过审核的客户清单，标记指定唯一编码客户卡申请通过审核，并指定该卡申请制作的任务类型。每日投递一次。</li>
+</ol>
+<p>VP-&gt;浦发：</p>
+<ol>
+  <li><a href="#SKTRSP">终稿图片文件清单</a>：已经制图成功的任务清单，返回对应任务的唯一编码，Promotion ID及Fee Code。每一条成功任务附带终稿图片文件。每日投递一次。</li>
+  <li><a href="#SKTRSPLAYOUT">终稿图片文件版式汇总清单</a>：当日允许制卡的任务，根据版式信息提供的统计报表。</li>
+  <li><a href="#ResultPic">终稿图片文件</a>：设计师制图后生成的成果文件，文件名进过编码嵌入唯一编码、Promotion ID，版式代码及Fee Code。每日投递一次。</li>
+  <li><a href="#TASKFAILED">制图失败工单报表 </a>：制图任务失败的任务清单，提交浦发进行后续处理。每日投递一次。</li>
+  <li><a href="#TASKSTATUS">卡片获批可制图工单任务状态更新文件</a>：当日执行状态发生变更的任务清单。每日投递一次。</li>
+  <li><a href="#Reports">报表</a>：按不同周期制作的对账清算报表。每周期投递一次。</li>
+</ol>
+-->
+<table border="1" cellspacing="5" cellpadding="5" id="fe_table">
+  <tr>
+    <td>文件名</td>
+    <td>作用</td>
+    <td>传输频率</td>
+    <td nowrap="nowrap">发送方</td>
+    <td nowrap="nowrap">接收方</td>
+    <td nowrap="nowrap">文件类型</td>
+    <td nowrap="nowrap">后缀名</td>
+    <td nowrap="nowrap">示例</td>
+  </tr>
+  <tr class="spdcc2vp">
+    <td><a href="#TaskPic">制图图片文件</a></td>
+    <td>客户提供的（或通过网站上传，或通过实物照片提交）的原始图片，供VP制图使用。文件名进过编码嵌入唯一编码、Promotion ID及版式代码。</td>
+    <td>每小时</td>
+    <td>浦发</td>
+    <td>VP</td>
+    <td>JPEG</td>
+    <td>jpg</td>
+    <td>186216833241202880102100.jpg</td>
+  </tr>
+  <tr class="spdcc2vp">
+    <td><a href="#SKTWAIT">卡片获批可制图工单文件</a></td>
+    <td>通过审核的客户清单，标记指定唯一编码客户卡申请通过审核，并指定该卡申请制作的任务类型。</td>
+    <td>每日07:00，含昨日数据</td>
+    <td>浦发</td>
+    <td>VP</td>
+    <td>TXT</td>
+    <td>无</td>
+    <td>0310-SKTWAIT-20111012</td>
+  </tr>
+  <tr>
+    <td><a href="#ResultPic">终稿图片文件</a></td>
+    <td>设计师制图后生成的成果文件，文件名进过编码嵌入唯一编码、Promotion ID，版式代码及Fee Code。</td>
+    <td>每小时</td>
+    <td>VP</td>
+    <td>浦发</td>
+    <td>JPEG</td>
+    <td>jpg</td>
+    <td>1862168332412021.jpg</td>
+  </tr>
+  <tr>
+    <td><a href="#SKTRSP">终稿图片文件清单</a></td>
+    <td>已经制图成功的任务清单，返回对应任务的唯一编码，Promotion ID及Fee Code。每一条成功任务附带终稿图片文件。</td>
+    <td>每日19:00，含前24小时数据</td>
+    <td>VP</td>
+    <td>浦发</td>
+    <td>TXT</td>
+    <td>无</td>
+    <td>0310-SKTRSP-20111012</td>
+  </tr>
+  <tr>
+    <td><a href="#SKTRSPLAYOUT">终稿图片文件版式汇总清单</a></td>
+    <td>当日允许制卡的任务，根据版式信息提供的统计报表。</td>
+    <td>每日19:00，含前24小时数据</td>
+    <td>VP</td>
+    <td>浦发</td>
+    <td>TXT</td>
+    <td>无</td>
+    <td>0310-SKTRSPLAYOUT-20111012</td>
+  </tr>
+  <tr>
+    <td><a href="#TASKSTATUS">卡片获批可制图工单任务状态更新文件</a></td>
+    <td>通过审核的客户清单，标记指定唯一编码客户卡申请通过审核，并指定该卡申请制作的任务类型。每日投递一次。</td>
+    <td>每日05:00，含昨日数据</td>
+    <td>VP</td>
+    <td>浦发</td>
+    <td>TXT</td>
+    <td>txt</td>
+    <td>0310-TASKSTATUS-20111012.txt</td>
+  </tr>
+  <tr>
+    <td><p><a href="#TASKFAILED">制图失败工单报表</a></p></td>
+    <td>制图任务失败的任务清单（VP00/04/06），提交浦发进行后续处理。</td>
+    <td>每日05:00，含昨日数据</td>
+    <td>VP</td>
+    <td>浦发</td>
+    <td>EXCEL</td>
+    <td>xls</td>
+    <td>0310-TASKFAILED-20111012.xls</td>
+  </tr>
+  <tr>
+    <td><a href="#TaskException">制图异常工单报表</a></td>
+    <td>制图任务异常的任务清单（VP02），提交浦发进行后续处理。</td>
+    <td>每日05:00，含昨日数据</td>
+    <td>VP</td>
+    <td>浦发</td>
+    <td>EXCEL</td>
+    <td>xls</td>
+    <td>0310-TASKEXCEPTION-20111012.xls</td>
+  </tr>
+  <tr class="spdcc2vp">
+    <td><a href="#TaskExceptionReply">制图异常工单报表结果回复</a></td>
+    <td>制图任务异常的任务的处理回复。</td>
+    <td>每日</td>
+    <td>浦发</td>
+    <td>VP</td>
+    <td>EXCEL</td>
+    <td>xls</td>
+    <td>0310-TASKEXCEPTION-REPLY-20111012.xls</td>
+  </tr>
+  <tr>
+    <td><a href="#stats">综合供应商报表</a></td>
+    <td>综合供应商数据统计报表。</td>
+    <td>周、月（人工传递）</td>
+    <td>VP</td>
+    <td>浦发</td>
+    <td>EXCEL</td>
+    <td>xls</td>
+    <td>VP-STATS-20111012.xls<br />
+VP-STATS-201110.xls</td>
+  </tr>
+  <tr>
+    <td><a href="#settle">制图费用清算文件</a></td>
+    <td>制图费用清算。</td>
+    <td>周、月（人工传递）</td>
+    <td>VP</td>
+    <td>浦发</td>
+    <td>EXCEL</td>
+    <td>xls</td>
+    <td>VP-SETTLE-WEEKLY-20111012.xls<br />
+    VP-SETTLE-MONTHLY-201110.xls<br /></td>
+  </tr>
+</table>
+<hr />
+<h2><a name="EncodingProtocal" id="EncodingProtocal"></a>文件编码规则</h2>
+<h3><a name="TaskPic" id="TaskPic"></a>制图图片文件（浦发-&gt;VP） </h3>
+<p>所在目录：sftp/incoming/</p>
+<p>制图图片每日每小时投递一次，制图图片文件需提供以下信息，将这些信息进行序列化（简单的值字串拼合）后进行文件命名。序列化信息由以下几个部分组成：</p>
+<ul>
+  <li>唯一编码（15位有效唯一编码）</li>
+  <li>Promotion ID</li>
+  <li>版式类型</li>
+  <li>图库编号</li>
+</ul>
+<table border="1" cellspacing="5" cellpadding="5">
+  <tr>
+    <td nowrap="nowrap">分组</td>
+    <td nowrap="nowrap">名称</td>
+    <td nowrap="nowrap">数据长度</td>
+    <td nowrap="nowrap">示例</td>
+    <td nowrap="nowrap">类型</td>
+    <td nowrap="nowrap">可选？</td>
+    <td nowrap="nowrap">备注</td>
+  </tr>
+  <tr>
+    <td rowspan="2" nowrap="nowrap">唯一编码</td>
+    <td nowrap="nowrap">手机号码</td>
+    <td>11</td>
+    <td>18621683324</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>手机号码</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">生日月日</td>
+    <td>4</td>
+    <td>1202</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>生日月日</td>
+  </tr>
+  <tr>
+    <td rowspan="3" nowrap="nowrap">Promotion ID</td>
+    <td nowrap="nowrap"><a href="#source">来源标记</a></td>
+    <td>2</td>
+    <td>88</td>
+    <td>枚举值</td>
+    <td>否</td>
+    <td>网站上传或实物照片</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap"><a href="#DesignType">设计类型</a></td>
+    <td>2</td>
+    <td>01</td>
+    <td>枚举值</td>
+    <td>否</td>
+    <td>手绘Q图版、场景版等</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap"><a href="#DesignStyle">设计效果</a></td>
+    <td>2</td>
+    <td>02</td>
+    <td>枚举值</td>
+    <td>否</td>
+    <td>设计类型下具体的设计效果，如手绘Q图版下的卡通彩色，见附录，设计效果表应具有联合主键（设计类型ID和设计效果ID）</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">版式类型</td>
+    <td nowrap="nowrap"><a href="#LayoutType">版式类型</a></td>
+    <td>1</td>
+    <td>1</td>
+    <td>枚举值</td>
+    <td>否</td>
+    <td>横版、竖版</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">图库编号</td>
+    <td nowrap="nowrap">图库编号</td>
+    <td>2</td>
+    <td>01</td>
+    <td>枚举值</td>
+    <td>否</td>
+    <td>当设计类型为图库自选时有意义，其他类型时均为00</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">示例：</td>
+    <td colspan="6" nowrap="nowrap">186216833241202880102100.jpg</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">注：</td>
+    <td colspan="6" nowrap="nowrap">图片类型为标准JPEG图片文件，图片后缀名：jpg。</td>
+  </tr>
+</table>
+<p>序列化后文件名长度 24 定长。</p>
+<p>VP系统在检测到有新制图图片文件时，会根据图片名内嵌唯一编码检索数据库：</p>
+<ul>
+  <li>如果找到任务，则该制图图片文件将被视作客户换图需求，进入后续制图任务流程，并尊重制图图片文件名中表达的制图需求含义，按照新的Promotion ID及版式类型更新任务需求。如果图片中这些信息为占位符（半角空格时），VP则使用原任务中相应信息进行制作，该图片则作为客户换图的新图片进行指派。</li>
+  <li>如果不能找到任务，则作为新卡申请的客户图片，暂不予处理，等到有“卡片获批可制图工单文件”中包含该图片任务时再予以处理，进入下一制作流程。在等待期间，如有新的制图图片文件投递进来，文件名完全相同（即唯一编码同，Promotion ID等信息相同）时，后投递的图片将覆盖原图片；若文件名不完全相同（唯一编码相同，Promotion ID不同），则认为同一客户同时有两条任务，进入异常处理（<a href="#TaskStatus">VP02</a>），直接反馈浦发。</li>
+</ul>
+<h3><a name="SKTWAIT" id="SKTWAIT"></a>卡片获批可制图工单文件（浦发-&gt;VP）</h3>
+<p>所在目录：sftp/incoming/</p>
+<p>任务清单每日每日07:00投递一次（含昨日数据），命名规则0310-SKTWAIT-YYYYMMDD（0310为银行代号，常量），文本文件无后缀名。内容每行写入一条任务，罗列当日卡片获批可制图工单文件。</p>
+<p>举例：2011年10月12日任务清单，文件名为 0310-SKTWAIT-20111012</p>
+<p>每行代表一条待制卡任务，序列化信息由以下几个部分组成：</p>
+<ul>
+  <li>唯一编码（26位含占位符）</li>
+  <li>更换图片标志</li>
+</ul>
+<table border="1" cellspacing="5" cellpadding="5">
+  <tr>
+    <td nowrap="nowrap">分组</td>
+    <td nowrap="nowrap">名称</td>
+    <td nowrap="nowrap">数据长度</td>
+    <td nowrap="nowrap">示例</td>
+    <td nowrap="nowrap">类型</td>
+    <td nowrap="nowrap">可选？</td>
+    <td nowrap="nowrap">备注</td>
+  </tr>
+  <tr>
+    <td rowspan="3" nowrap="nowrap">唯一编码</td>
+    <td nowrap="nowrap">手机号码</td>
+    <td>11</td>
+    <td>18621683324</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>手机号码</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">生日月日</td>
+    <td>4</td>
+    <td>1202</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>生日月日</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">占位符</td>
+    <td>11</td>
+    <td>&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>半角空格占位符</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">更换图片标志</td>
+    <td nowrap="nowrap"><a href="#TaskType">任务类型</a></td>
+    <td>1</td>
+    <td>1</td>
+    <td>枚举值</td>
+    <td>否</td>
+    <td>空格：表示新申请卡片<br />
+      0：表示换卡不需要更换图片<br />
+    1：表示换卡需要更换图片</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">示例：</td>
+    <td colspan="6" nowrap="nowrap">186216833241202&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;1</td>
+  </tr>
+</table>
+<p>序列化后每行任务信息长度 27 定长。</p>
+<p>文件内容示例</p>
+<pre>
+186216833241202&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;
+186216833241202&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;1
+186216833241202&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;2
+</pre>
+<h3><a name="SKTRSP" id="SKTRSP"></a>终稿图片文件清单（VP-&gt;浦发）</h3>
+<p>所在目录：sftp/output/</p>
+<p>任务清单每日19:00投递一次，包含数据为前一天19:00至当日19:00期间制图成功的任务清单，命名规则0310-SKTRSP-YYYYMMDD（0310为银行代号，常量），文本文件无后缀名。内容每行写入一条任务，罗列当期终稿图片文件清单。任务清单附带制图成果图片文件，与清单中列举任务一一对应（终稿图片文件名可从任务信息中提取，详细见终稿图片文件）。</p>
+<p>举例：2011年10月12日终稿图片文件清单，文件名为 0310-SKTRSP-20111012</p>
+<p>每行代表一条允许制卡任务，序列化信息由以下几个部分组成：</p>
+<ul>
+  <li>唯一编码（26位含占位符）</li>
+  <li>Promotion ID</li>
+  <li>Fee Code</li>
+</ul>
+<table border="1" cellspacing="5" cellpadding="5">
+  <tr>
+    <td nowrap="nowrap">分组</td>
+    <td nowrap="nowrap">名称</td>
+    <td nowrap="nowrap">数据长度</td>
+    <td nowrap="nowrap">示例</td>
+    <td nowrap="nowrap">类型</td>
+    <td nowrap="nowrap">可选？</td>
+    <td nowrap="nowrap">备注</td>
+  </tr>
+  <tr>
+    <td rowspan="3" nowrap="nowrap">唯一编码</td>
+    <td nowrap="nowrap">手机号码</td>
+    <td>11</td>
+    <td>18621683324</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>手机号码</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">生日月日</td>
+    <td>4</td>
+    <td>1202</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>生日月日</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">占位符</td>
+    <td>11</td>
+    <td>&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>半角空格占位符</td>
+  </tr>
+  <tr>
+    <td rowspan="3" nowrap="nowrap">Promotion ID</td>
+    <td nowrap="nowrap"><a href="#source">来源标记</a></td>
+    <td>2</td>
+    <td>88</td>
+    <td>枚举值</td>
+    <td>否</td>
+    <td>网站上传或实物照片</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap"><a href="#DesignType">设计类型</a></td>
+    <td>2</td>
+    <td>01</td>
+    <td>枚举值</td>
+    <td>否</td>
+    <td>手绘Q图版、场景版等</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap"><a href="#DesignStyle">设计效果</a></td>
+    <td>2</td>
+    <td>02</td>
+    <td>枚举值</td>
+    <td>否</td>
+    <td>设计类型下具体的设计效果，如手绘Q图版下的卡通彩色，见附录，设计效果表应具有联合主键（设计类型ID和设计效果ID）</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">Fee Code</td>
+    <td nowrap="nowrap">Fee Code</td>
+    <td nowrap="nowrap">2</td>
+    <td nowrap="nowrap">&not;&not;</td>
+    <td nowrap="nowrap">枚举值</td>
+    <td nowrap="nowrap">否</td>
+    <td nowrap="nowrap">根据Promotion ID规则使用，系统当前无Fee Code规则，暂无Fee Code信息，以2位半角空格占位</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">示例：</td>
+    <td colspan="6" nowrap="nowrap">186216833241202&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;880102&not;&not;</td>
+  </tr>
+</table>
+<p>序列化后每行任务信息长度 34 定长。</p>
+<p>解析后，创建制图任务的开始时间（创建时间）按“允许任务清单”文件名中的日期设定。</p>
+<p>文件内容示例</p>
+<pre>186216833241202&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;8801021&not;&not;
+138216814240217&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;9904002&not;&not;</pre>
+<h3><a name="SKTRSPLAYOUT" id="SKTRSPLAYOUT"></a>允许制卡任务版式汇总清单（VP-&gt;浦发）</h3>
+<p>所在目录：sftp/output/</p>
+<p>任务清单每日19:00投递一次，包含数据为前一天19:00至当日19:00期间制图成功的任务清单，命名规则0310-SKTRSPLAYOUT-YYYYMMDD（0310为银行代号，常量），文本文件无后缀名。内容包含当日允许制图任务的版式汇总信息。</p>
+<p>举例：2011年10月12日终稿图片文件清单，文件名为 0310-SKTRSPLAYOUT-20111012</p>
+<p>每行一条版式类型编号及数量，序列化信息由以下几个部分组成：</p>
+<ul>
+  <li>版式类型编号</li>
+  <li>Fee Code</li>
+</ul>
+<table border="1" cellspacing="5" cellpadding="5">
+  <tr>
+    <td nowrap="nowrap">分组</td>
+    <td nowrap="nowrap">名称</td>
+    <td nowrap="nowrap">数据长度</td>
+    <td nowrap="nowrap">示例</td>
+    <td nowrap="nowrap">类型</td>
+    <td nowrap="nowrap">可选？</td>
+    <td nowrap="nowrap">备注</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">版式类型编号</td>
+    <td nowrap="nowrap"><a href="#LayoutType">版式类型</a></td>
+    <td>1</td>
+    <td>1</td>
+    <td>枚举值</td>
+    <td>否</td>
+    <td>1 横版、2 竖版</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">数量</td>
+    <td nowrap="nowrap">数量</td>
+    <td nowrap="nowrap">不限</td>
+    <td nowrap="nowrap">121</td>
+    <td nowrap="nowrap">整型</td>
+    <td nowrap="nowrap">否</td>
+    <td nowrap="nowrap">版式类型下允许制图任务数量</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">示例：</td>
+    <td colspan="6" nowrap="nowrap">121 （横版21条任务）</td>
+  </tr>
+</table>
+<p>文件内容示例</p>
+<pre>121
+231</pre>
+<h3><a name="ResultPic" id="ResultPic"></a>终稿图片文件（VP-&gt;浦发） </h3>
+<p>所在目录：sftp/output/</p>
+<p>终稿图片文件每日每小时投递一次，当日19:00生成终稿图片文件清单文件。成果图片文件需提供以下信息，将这些信息进行序列化（简单的值字串拼合）后进行文件命名。序列化信息由以下几个部分组成：</p>
+<ul>
+  <li>唯一编码（15位有效唯一编码）</li>
+  <li>版式类型</li>
+</ul>
+<table border="1" cellspacing="5" cellpadding="5">
+  <tr>
+    <td nowrap="nowrap">分组</td>
+    <td nowrap="nowrap">名称</td>
+    <td nowrap="nowrap">数据长度</td>
+    <td nowrap="nowrap">示例</td>
+    <td nowrap="nowrap">类型</td>
+    <td nowrap="nowrap">可选？</td>
+    <td nowrap="nowrap">备注</td>
+  </tr>
+  <tr>
+    <td rowspan="2" nowrap="nowrap">唯一编码</td>
+    <td nowrap="nowrap">手机号码</td>
+    <td>11</td>
+    <td>18621683324</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>手机号码</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">生日月日</td>
+    <td>4</td>
+    <td>1202</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>生日月日</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">版式类型</td>
+    <td nowrap="nowrap"><a href="#LayoutType">版式类型</a></td>
+    <td>1</td>
+    <td>1</td>
+    <td>枚举值</td>
+    <td>否</td>
+    <td>横版、竖版</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">示例：</td>
+    <td colspan="6" nowrap="nowrap">1862168332412021.jpg</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">注：</td>
+    <td colspan="6" nowrap="nowrap">图片类型为标准JPEG图片文件，图片后缀名：jpg。</td>
+  </tr>
+</table>
+<p>序列化后文件名长度 16 定长。</p>
+<p>VP系统在获取终稿图片文件清单后，遍历列举的任务列表提取对应制图文件时，需要对文件名进行简单处理。即任务信息中提取15位唯一编码＋版式类型＋.jpg后缀名即为对应的终稿图片文件。</p>
+<h3><a name="TASKFAILED" id="TASKFAILED"></a>制图失败工单报表 （VP-&gt;浦发）</h3>
+<p>所在目录：sftp/output/</p>
+<p>制图失败工单报表每日05:00投递一份（含昨日数据），命名规则0310-TASKFAILED-YYYYMMDD.xls（0310为银行代号，常量），EXCEL文件，后缀名xls。内容每行写入一条任务，罗列截止当日所有失败的任务清单（VP00图片未提交、VP04审核失败及VP06制图失败的任务集合）。</p>
+<p>举例：2011年10月12日制图失败工单报表 ，文件名为 0310-TASKFAILED-20111012.xls</p>
+<p>每行代表一条审核失败任务，序列化信息由以下几个部分组成：</p>
+<ul>
+  <li>唯一编码（26位含占位符）</li>
+  <li>任务状态</li>
+  <li>工单等待时间
+  </li><li>失败原因</li>
+</ul>
+<table border="1" cellspacing="5" cellpadding="5">
+  <tr>
+    <td nowrap="nowrap">分组</td>
+    <td nowrap="nowrap">名称</td>
+    <td>数据长度</td>
+    <td>示例</td>
+    <td>类型</td>
+    <td>可选？</td>
+    <td>备注</td>
+  </tr>
+  <tr>
+    <td rowspan="3" nowrap="nowrap">唯一编码</td>
+    <td nowrap="nowrap">手机号码</td>
+    <td>11</td>
+    <td>18621683324</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>手机号码</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">生日月日</td>
+    <td>4</td>
+    <td>1202</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>生日月日</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">占位符</td>
+    <td>11</td>
+    <td>&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>半角空格占位符</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">任务状态</td>
+    <td nowrap="nowrap"><a href="#TaskStatus">任务状态</a></td>
+    <td>4</td>
+    <td>VP00</td>
+    <td>枚举值</td>
+    <td>否</td>
+    <td>任务当前状态代码</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">工单等待时间
+    </td><td nowrap="nowrap">工单等待时间
+    </td><td>2</td>
+    <td>01</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>从任务创建日（卡申请通过审核）起在制卡系统中工单等待时间。不足10天十位数补0，超过99天为99。</td>
+  </tr>
+  <tr>
+    <td>失败原因</td>
+    <td>失败原因</td>
+    <td>任意</td>
+    <td>图片未上传</td>
+    <td>字符串</td>
+    <td>是</td>
+    <td>&nbsp;</td>
+  </tr>
+</table>
+<p>序列化任务信息不包含失败原因字符长度为 32 ，失败原因任意长度。</p>
+<p>文件内容示例 （<a href="0310-TASKFAILED-20111012.xls">下载</a>）</p>
+<p><img src="taskfailed.png" width="398" height="63" /></p>
+<!--
+<pre>186216833241202&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;VP0105图片未上传
+138216814240217&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;VP0302图片过于模糊，无法识别
+</pre>
+-->
+<h3><a name="TaskException" id="TaskException"></a>制图异常工单报表 （VP-&gt;浦发）</h3>
+<p>所在目录：sftp/output/</p>
+<p>制图异常工单报表每日05:00投递一份（含昨日数据），命名规则0310-TASKEXCEPTION-YYYYMMDD（0310为银行代号，常量），EXCEL文件，后缀名xls。内容每行写入一条任务，罗列截止当日VP02（审核失败，收到多张照片）的任务清单。</p>
+<p>异常工单实际特指VP02(审核失败，收到多张照片)这种异常情况。指在获得“<a href="#SKTWAIT">卡片获批可制图工单文件</a>”清单时，查找获批卡片唯一编号对应的制图文件时，找到2张图片。这往往是由于客户在提交申请照片时，即从网上提交，同时也提交了实物照片，导致同一个唯一编码下有不同来源的图片，它们的设计需求可能相同可能不同。这导致系统或者人工无法判断客户的真实意愿。发生该意外时，向浦发客户提交异常工单报表，期望获得“<a href="#TaskExceptionReply">制图异常工单报表结果回复</a>”，得到客户的选择，从而由VP项目经理在系统中手动为该任务选择适用制图文件。</p>
+<p>举例：2011年10月12日制图异常工单报表 ，文件名为 0310-TASKEXCEPTION-20111012.xls</p>
+<p>每行代表一条异常任务，序列化信息由以下几个部分组成：</p>
+<ul>
+  <li>唯一编码（26位含占位符）</li>
+  <li>任务状态</li>
+  <li>工单等待时间</li>
+</ul>
+<table border="1" cellspacing="5" cellpadding="5">
+  <tr>
+    <td nowrap="nowrap">分组</td>
+    <td nowrap="nowrap">名称</td>
+    <td>数据长度</td>
+    <td>示例</td>
+    <td>类型</td>
+    <td>可选？</td>
+    <td>备注</td>
+  </tr>
+  <tr>
+    <td rowspan="3" nowrap="nowrap">唯一编码</td>
+    <td nowrap="nowrap">手机号码</td>
+    <td>11</td>
+    <td>18621683324</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>手机号码</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">生日月日</td>
+    <td>4</td>
+    <td>1202</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>生日月日</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">占位符</td>
+    <td>11</td>
+    <td>&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>半角空格占位符</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">任务状态</td>
+    <td nowrap="nowrap"><a href="#TaskStatus">任务状态</a></td>
+    <td>4</td>
+    <td>VP02</td>
+    <td>枚举值</td>
+    <td>否</td>
+    <td>任务当前状态代码</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">工单等待时间
+    </td><td nowrap="nowrap">工单等待时间
+    </td><td>2</td>
+    <td>01</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>从任务创建日（卡申请通过审核）起在制卡系统中工单等待时间。不足10天十位数补0，超过99天为99。</td>
+  </tr>
+</table>
+<p>序列化任务信息不包含失败原因字符长度为 32 ，失败原因任意长度。</p>
+<p>文件内容示例 （<a href="0310-TASKEXCEPTION-20111012.xls">下载</a>）</p>
+<p><img src="taskexception.png" width="321" height="59" /></p>
+<!--
+<pre>186216833241202&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;VP0105图片未上传
+138216814240217&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;VP0302图片过于模糊，无法识别
+</pre>
+-->
+<h3><a name="TaskExceptionReply" id="TaskExceptionReply"></a>制图异常工单报表结果回复 （浦发-&gt;VP）</h3>
+<p>所在目录：sftp/output/</p>
+<p>制图异常工单报表结果回复，每日由人工递送一份，以电子邮件形式发送给VP项目经理，作为指定日期异常工单的处理回复，命名规则0310-TASKEXCEPTION-REPLY-YYYYMMDD（0310为银行代号，常量），EXCEL文件，后缀名xls。内容每行写入一条异常任务及处理回复。由VP项目经理手动在系统中为异常任务指定客户选择的制图文件。</p>
+<p>举例：2011年10月12日制图异常工单报表 ，文件名为 0310-TASKEXCEPTION-REPLY-20111012.xls</p>
+<p>每行代表一条异常任务处理回复，序列化信息由以下几个部分组成：</p>
+<ul>
+  <li>唯一编码（26位含占位符）</li>
+  <li>任务状态</li>
+  <li>工单等待时间
+  </li>
+  <li>反馈信息</li>
+</ul>
+<table border="1" cellspacing="5" cellpadding="5">
+  <tr>
+    <td nowrap="nowrap">分组</td>
+    <td nowrap="nowrap">名称</td>
+    <td>数据长度</td>
+    <td>示例</td>
+    <td>类型</td>
+    <td>可选？</td>
+    <td>备注</td>
+  </tr>
+  <tr>
+    <td rowspan="3" nowrap="nowrap">唯一编码</td>
+    <td nowrap="nowrap">手机号码</td>
+    <td>11</td>
+    <td>18621683324</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>手机号码</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">生日月日</td>
+    <td>4</td>
+    <td>1202</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>生日月日</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">占位符</td>
+    <td>11</td>
+    <td>&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>半角空格占位符</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">任务状态</td>
+    <td nowrap="nowrap"><a href="#TaskStatus">任务状态</a></td>
+    <td>4</td>
+    <td>VP00</td>
+    <td>枚举值</td>
+    <td>否</td>
+    <td>任务当前状态代码</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">工单等待时间
+    </td><td nowrap="nowrap">工单等待时间
+    </td><td>2</td>
+    <td>01</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>从任务创建日（卡申请通过审核）起在制卡系统中工单等待天数。不足10天十位数补0，超过99天为99。</td>
+  </tr>
+  <tr>
+    <td>反馈信息</td>
+    <td>反馈信息</td>
+    <td>任意</td>
+    <td>网上提交：NET</td>
+    <td>字符串</td>
+    <td>是</td>
+    <td>对异常任务的处理回复</td>
+  </tr>
+</table>
+<p>序列化任务信息不包含失败原因字符长度为 32 ，失败原因任意长度。</p>
+<p>文件内容示例 （<a href="0310-TASKEXCEPTION-REPLY-20111012.xls">下载</a>）</p>
+<p><img src="taskexceptionreply.png" width="413" height="59" /></p>
+<!--
+<pre>186216833241202&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;VP0105图片未上传
+138216814240217&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;VP0302图片过于模糊，无法识别
+</pre>
+-->
+<h3><a name="TASKSTATUS" id="TASKSTATUS"></a>卡片获批可制图工单任务状态更新文件（VP-&gt;浦发）</h3>
+<p>所在目录：sftp/output/</p>
+<p>卡片获批可制图工单任务状态更新文件每日05:00投递一份（含昨日数据），命名规则0310-TASKSTATUS-YYYYMMDD（0310为银行代号，常量），文本文件，后缀名txt。内容每行写入一条任务，罗列卡片获批可制图工单任务状态更新文件，数据集包含在当日任务状态发生过变迁的所有任务。</p>
+<p>举例：2011年10月12日制图失败工单报表 ，文件名为 0310-TASKSTATUS-20111012.txt</p>
+<p>每行代表一条审核失败任务，序列化信息由以下几个部分组成：</p>
+<ul>
+  <li>唯一编码（15位不含占位符）</li>
+  <li>任务状态</li>
+</ul>
+<table border="1" cellspacing="5" cellpadding="5">
+  <tr>
+    <td nowrap="nowrap">分组</td>
+    <td nowrap="nowrap">名称</td>
+    <td>数据长度</td>
+    <td>示例</td>
+    <td>类型</td>
+    <td>可选？</td>
+    <td>备注</td>
+  </tr>
+  <tr>
+    <td rowspan="2" nowrap="nowrap">唯一编码</td>
+    <td nowrap="nowrap">手机号码</td>
+    <td>11</td>
+    <td>18621683324</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>手机号码</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">生日月日</td>
+    <td>4</td>
+    <td>1202</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>生日月日</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">任务状态</td>
+    <td nowrap="nowrap"><a href="#TaskStatus">任务状态</a></td>
+    <td>4</td>
+    <td>VP03</td>
+    <td>枚举值</td>
+    <td>否</td>
+    <td>任务当前状态代码</td>
+  </tr>
+</table>
+<p>序列化任务信息不包含失败原因字符长度为 19 ，失败原因任意长度。</p>
+<p>文件内容示例</p>
+<pre>186216833241202VP0105
+138216814240217VP0302</pre>
+<h3><a name="Reports" id="Reports"></a>报告文件（VP-&gt;浦发）</h3>
+<p>所在目录：sftp/output/</p>
+<p>报告包括以下几种类型：</p>
+<ul>
+  <li><a name="stats" id="stats"></a>供应商综合报表</li>
+  <ul>
+    <li>制作完成、失败(异常)任务数量及类型报表</li>
+    <li>周报、月报 </li>
+    <li><img src="VP-STATS-201110.png" width="519" height="473" /></li>
+    <li>示例文件：<a href="供应商综合报表.xls">下载</a></li>
+  </ul>
+  <li><a name="settle" id="settle"></a>制图费用清算报表 </li>
+  <ul>
+    <li>待确定</li>
+  </ul>
+</ul>
+<hr />
+<h3><a name="CloseTask" id="CloseTask"></a>任务的结束</h3>
+<p>在“<a href="#TaskStatus">任务状态</a>”中列举的各种任务状态为制图任务在VP系统中流转时可能被赋予的全部状态值。这些状态中有的为初始状态，有的为中间状态，有的则为终结状态。终结状态又分为成功结束及失败结束两种类型。成功结束的任务除非重新被激活（浦发发起换图任务），一般即为任务终结；失败结束的任务往往会在得到进一步反馈后会被重新指派并重新流转。任务状态的终结类型如下表：</p>
+<table border="1" cellspacing="5" cellpadding="5">
+  <tr>
+    <td>ID</td>
+    <td>含义</td>
+    <td>生命期</td>
+    <td>所属报告</td>
+    <td>忍耐期限(T+x)</td>
+  </tr>
+  <tr>
+    <td>VP00</td>
+    <td>图片未提交</td>
+    <td><span class="close_lost">失败结束</span></td>
+    <td><a href="#TASKFAILED">制图失败工单报表</a></td>
+    <td>T+10</td>
+  </tr>
+  <tr>
+    <td>VP01</td>
+    <td>待审核</td>
+    <td>初始状态</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>VP02</td>
+    <td>审核失败，收到多张照片</td>
+    <td><span class="close_lost">失败结束</span></td>
+    <td><a href="#TaskException">制图异常工单报表</a></td>
+    <td>T+10</td>
+  </tr>
+  <tr>
+    <td>VP03</td>
+    <td>图片审核中</td>
+    <td>中间状态</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>VP04</td>
+    <td>图片审核不通过</td>
+    <td><span class="close_lost">失败结束</span></td>
+    <td><a href="#TASKFAILED">制图失败工单报表</a></td>
+    <td>T+10</td>
+  </tr>
+  <tr>
+    <td>VP05</td>
+    <td>制图中</td>
+    <td>中间状态</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>VP06</td>
+    <td>制图失败</td>
+    <td><span class="close_lost">失败结束</span></td>
+    <td><a href="#TASKFAILED">制图失败工单报表</a></td>
+    <td>T+10</td>
+  </tr>
+  <tr>
+    <td>VP07</td>
+    <td>制图成功</td>
+    <td><span class="close_won">成功结束</span></td>
+    <td><a href="#SKTRSP">终稿图片文件清单</a><br />      <a href="#SKTRSPLAYOUT">终稿图片文件版式汇总清单</a></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>VP08</td>
+    <td>制图成功，使用默认图</td>
+    <td><span class="close_won">成功结束</span></td>
+    <td><a href="#SKTRSP">终稿图片文件清单</a><br />      <a href="#SKTRSPLAYOUT">终稿图片文件版式汇总清单</a></td>
+    <td>&nbsp;</td>
+  </tr>
+</table>
+<p>失败结束的任务会在制图失败/异常报表中得到呈现，通过得到的反馈及浦发后续的数据跟进，对任务信息进行更新，从而最终将任务转换为成功结束。但在某些情况下，失败/异常任务一直得不到跟进处理（如客户迟迟不提供反馈或上传更新的图片）时，失败任务将永久留在系统中并不断在错误/异常报告中出现，而且卡片也一直无法制作发放，因此对每种失败结束的任务定义了忍耐期限(T+x)，当任务存续时间超过该设置，则任务自动标记为成功结束，适用默认卡面设计参数进行制作。为了与常规成功结束的任务有所区分，适用VP08状态值。这里的T是任务创建日，即任务第一次在“<a href="#SKTWAIT">卡片获批可制图工单文件</a>”中以新卡申请状态出现时的日期。x是值在任务创建日开始到现在的天数。目前所有忍耐期限均为10天（工作日，去除法定节假日）。</p>
+<hr />
+<h2><a name="enum" id="enum"></a>附录：枚举值</h2>
+<p><a name="TaskType" id="TaskType"></a>任务类型(task_types)</p>
+<table border="1" cellspacing="5" cellpadding="5">
+  <tr>
+    <td>ID</td>
+    <td>含义</td>
+  </tr>
+  <tr>
+    <td>&not;</td>
+    <td>新卡申请</td>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td>换卡换图</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>换卡不换图</td>
+  </tr>
+</table>
+<p><a name="source" id="source"></a>来源标记(source)</p>
+<table border="1" cellspacing="5" cellpadding="5">
+  <tr>
+    <td>ID</td>
+    <td>含义</td>
+  </tr>
+  <tr>
+    <td>88</td>
+    <td>网站上传</td>
+  </tr>
+  <tr>
+    <td>99</td>
+    <td>实物照片</td>
+  </tr>
+</table>
+<p><a name="DesignType" id="DesignType"></a>设计类型(trackers)</p>
+<table border="1" cellspacing="5" cellpadding="5">
+  <tr>
+    <td>ID</td>
+    <td>含义</td>
+  </tr>
+  <tr>
+    <td>01</td>
+    <td>手绘Q图版</td>
+  </tr>
+  <tr>
+    <td>02</td>
+    <td>场景版</td>
+  </tr>
+  <tr>
+    <td>03</td>
+    <td>图库自选版</td>
+  </tr>
+  <tr>
+    <td>04</td>
+    <td>客户上传版</td>
+  </tr>
+</table>
+<p><a name="DesignStyle" id="DesignStyle"></a>设计效果(design_effects)</p>
+<table border="1" cellspacing="5" cellpadding="5">
+  <tr>
+    <td>设计类型ID</td>
+    <td>设计效果ID</td>
+    <td>含义</td>
+  </tr>
+  <tr>
+    <td>01</td>
+    <td>01</td>
+    <td>手绘Q图卡通彩色</td>
+  </tr>
+  <tr>
+    <td>01</td>
+    <td>02</td>
+    <td>手绘Q图卡通黑白</td>
+  </tr>
+  <tr>
+    <td>01</td>
+    <td>03</td>
+    <td>手绘Q图写实彩色</td>
+  </tr>
+  <tr>
+    <td>01</td>
+    <td>04</td>
+    <td>手绘Q图写实黑白</td>
+  </tr>
+  <tr>
+    <td>02</td>
+    <td>01</td>
+    <td>场景1</td>
+  </tr>
+  <tr>
+    <td>02</td>
+    <td>02</td>
+    <td>场景2</td>
+  </tr>
+  <tr>
+    <td>02</td>
+    <td>n+1</td>
+    <td>场景n+1</td>
+  </tr>
+  <tr>
+    <td>03</td>
+    <td>01</td>
+    <td>图库1</td>
+  </tr>
+  <tr>
+    <td>03</td>
+    <td>02</td>
+    <td>图库2</td>
+  </tr>
+  <tr>
+    <td>03</td>
+    <td>n+1</td>
+    <td>图库n+1</td>
+  </tr>
+  <tr>
+    <td>04</td>
+    <td>00</td>
+    <td>客户图片</td>
+  </tr>
+</table>
+<p><a name="LayoutType" id="LayoutType"></a>版式类型(layouts)</p>
+<table border="1" cellspacing="5" cellpadding="5">
+  <tr>
+    <td>ID</td>
+    <td>含义</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>横版</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>竖版</td>
+  </tr>
+</table>
+<p><a name="TaskStatus" id="TaskStatus"></a>任务状态(issue_statuses)</p>
+<table border="1" cellspacing="5" cellpadding="5">
+  <tr>
+    <td>ID</td>
+    <td>含义</td>
+  </tr>
+  <tr>
+    <td>VP00</td>
+    <td>图片未提交</td>
+  </tr>
+  <tr>
+    <td>VP01</td>
+    <td>待审核</td>
+  </tr>
+  <tr>
+    <td>VP02</td>
+    <td>审核失败，收到多张照片</td>
+  </tr>
+  <tr>
+    <td>VP03</td>
+    <td>图片审核中</td>
+  </tr>
+  <tr>
+    <td>VP04</td>
+    <td>图片审核不通过</td>
+  </tr>
+  <tr>
+    <td>VP05</td>
+    <td>制图中</td>
+  </tr>
+  <tr>
+    <td>VP06</td>
+    <td>制图失败</td>
+  </tr>
+  <tr>
+    <td>VP07</td>
+    <td>制图成功</td>
+  </tr>
+  <tr>
+    <td>VP08</td>
+    <td>制图成功，使用默认图</td>
+  </tr>
+</table>
+<p><a name="FeeCode" id="FeeCode"></a>Fee Code(no model required)</p>
+<table border="1" cellspacing="5" cellpadding="5">
+  <tr>
+    <td>ID</td>
+    <td>含义</td>
+  </tr>
+  <tr>
+    <td>01</td>
+    <td>Fee Code 1</td>
+  </tr>
+  <tr>
+    <td>02</td>
+    <td>Fee Code 2</td>
+  </tr>
+</table>
+<hr />
+<h2><a name="VPChart" id="VPChart"></a>附录：VP系统流程图</h2>
+<p><img src="流程v2.png" width="568" height="1177" alt="VP系统流程图" /></p>
+</body>
+</html>
