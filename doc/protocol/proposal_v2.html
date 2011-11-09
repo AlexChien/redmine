@@ -24,7 +24,7 @@ pre {
   Participants: Gloria, Amy, Danqing, Xiaomei, Zack<br />
   Version: 2.0<br />
   Last Modified at: 
-  <!-- #BeginDate format:Am3m -->11/05/2011  23:52<!-- #EndDate --> 
+  <!-- #BeginDate format:Am3m -->11/10/2011  0:05<!-- #EndDate --> 
 </p>
 <h1>索引</h1>
 <ul>
@@ -631,7 +631,9 @@ VP-STATS-201110.xls</td>
 <p>每行代表一条审核失败任务，序列化信息由以下几个部分组成：</p>
 <ul>
   <li>唯一编码（26位含占位符）</li>
+  <li>任务类型</li>
   <li>任务状态</li>
+  <li>报告时间</li>
   <li>工单等待时间
   </li><li>失败原因</li>
 </ul>
@@ -671,13 +673,31 @@ VP-STATS-201110.xls</td>
     <td>半角空格占位符</td>
   </tr>
   <tr>
+    <td nowrap="nowrap">任务类型</td>
+    <td nowrap="nowrap">任务类型</td>
+    <td>任意</td>
+    <td>新卡申请</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>任务类型：新卡申请，换卡换图，换卡不换图</td>
+  </tr>
+  <tr>
     <td nowrap="nowrap">任务状态</td>
     <td nowrap="nowrap"><a href="#TaskStatus">任务状态</a></td>
-    <td>4</td>
+    <td>任意</td>
     <td>VP00</td>
     <td>枚举值</td>
     <td>否</td>
     <td>任务当前状态代码</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">报告时间</td>
+    <td nowrap="nowrap">报告时间</td>
+    <td>任意</td>
+    <td>2011-10-12 13:30:23</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>系统报告任务失败的初始时间</td>
   </tr>
   <tr>
     <td nowrap="nowrap">工单等待时间
@@ -698,9 +718,8 @@ VP-STATS-201110.xls</td>
     <td>&nbsp;</td>
   </tr>
 </table>
-<p>序列化任务信息不包含失败原因字符长度为 32 ，失败原因任意长度。</p>
 <p>文件内容示例 （<a href="0310-TASKFAILED-20111012.xls">下载</a>）</p>
-<p><img src="taskfailed.png" width="398" height="63" /></p>
+<p><img src="taskfailed.png" width="625" height="60" /></p>
 <!--
 <pre>186216833241202&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;VP0105图片未上传
 138216814240217&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;VP0302图片过于模糊，无法识别
@@ -714,7 +733,9 @@ VP-STATS-201110.xls</td>
 <p>每行代表一条异常任务，序列化信息由以下几个部分组成：</p>
 <ul>
   <li>唯一编码（26位含占位符）</li>
+  <li>任务类型</li>
   <li>任务状态</li>
+  <li>报告时间</li>
   <li>工单等待时间</li>
 </ul>
 <table border="1" cellspacing="5" cellpadding="5">
@@ -753,6 +774,15 @@ VP-STATS-201110.xls</td>
     <td>半角空格占位符</td>
   </tr>
   <tr>
+    <td nowrap="nowrap">任务类型</td>
+    <td nowrap="nowrap">任务类型</td>
+    <td>任意</td>
+    <td>新卡申请</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>任务类型：新卡申请，换卡换图，换卡不换图</td>
+  </tr>
+  <tr>
     <td nowrap="nowrap">任务状态</td>
     <td nowrap="nowrap"><a href="#TaskStatus">任务状态</a></td>
     <td>4</td>
@@ -760,6 +790,15 @@ VP-STATS-201110.xls</td>
     <td>枚举值</td>
     <td>否</td>
     <td>任务当前状态代码</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">报告时间</td>
+    <td nowrap="nowrap">报告时间</td>
+    <td>任意</td>
+    <td>2011-10-12 13:30:23</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>系统报告任务失败的初始时间</td>
   </tr>
   <tr>
     <td nowrap="nowrap">工单等待时间
@@ -771,9 +810,8 @@ VP-STATS-201110.xls</td>
     <td>从任务创建日（卡申请通过审核）起在制卡系统中工单等待时间。不足10天十位数补0，超过99天为99。</td>
   </tr>
 </table>
-<p>序列化任务信息不包含失败原因字符长度为 32 ，失败原因任意长度。</p>
 <p>文件内容示例 （<a href="0310-TASKEXCEPTION-20111012.xls">下载</a>）</p>
-<p><img src="taskexception.png" width="321" height="59" /></p>
+<p><img src="taskexception.png" width="555" height="61" /></p>
 <!--
 <pre>186216833241202&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;VP0105图片未上传
 138216814240217&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;VP0302图片过于模糊，无法识别
@@ -786,7 +824,9 @@ VP-STATS-201110.xls</td>
 <p>每行代表一条异常任务处理回复，序列化信息由以下几个部分组成：</p>
 <ul>
   <li>唯一编码（26位含占位符）</li>
+  <li>任务类型</li>
   <li>任务状态</li>
+  <li>报告时间</li>
   <li>工单等待时间
   </li>
   <li>反馈信息</li>
@@ -827,6 +867,15 @@ VP-STATS-201110.xls</td>
     <td>半角空格占位符</td>
   </tr>
   <tr>
+    <td nowrap="nowrap">任务类型</td>
+    <td nowrap="nowrap">任务类型</td>
+    <td>任意</td>
+    <td>新卡申请</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>任务类型：新卡申请，换卡换图，换卡不换图</td>
+  </tr>
+  <tr>
     <td nowrap="nowrap">任务状态</td>
     <td nowrap="nowrap"><a href="#TaskStatus">任务状态</a></td>
     <td>4</td>
@@ -834,6 +883,15 @@ VP-STATS-201110.xls</td>
     <td>枚举值</td>
     <td>否</td>
     <td>任务当前状态代码</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap">报告时间</td>
+    <td nowrap="nowrap">报告时间</td>
+    <td>任意</td>
+    <td>2011-10-12 13:30:23</td>
+    <td>字符串</td>
+    <td>否</td>
+    <td>系统报告任务失败的初始时间</td>
   </tr>
   <tr>
     <td nowrap="nowrap">工单等待时间
@@ -854,9 +912,8 @@ VP-STATS-201110.xls</td>
     <td>对异常任务的处理回复</td>
   </tr>
 </table>
-<p>序列化任务信息不包含失败原因字符长度为 32 ，失败原因任意长度。</p>
 <p>文件内容示例 （<a href="0310-TASKEXCEPTION-REPLY-20111012.xls">下载</a>）</p>
-<p><img src="taskexceptionreply.png" width="413" height="59" /></p>
+<p><img src="taskexceptionreply.png" width="652" height="60" /></p>
 <!--
 <pre>186216833241202&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;VP0105图片未上传
 138216814240217&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;VP0302图片过于模糊，无法识别
