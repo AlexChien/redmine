@@ -1,17 +1,18 @@
 class CreateTasks < ActiveRecord::Migration
   def self.up
     create_table :tasks do |t|
-      t.string :code, :null => false, :limit => 15
-      t.string :mobile, :null => false, :limit => 11
-      t.string :birth, :null => false, :limit => 4
-      t.string :approve_status, :null => false, :limit => 2
-      t.string :task_type, :null => false, :limit => 2
-      t.string :design_type, :null => false, :limit => 2
-      t.string :design_effect, :null => false, :limit => 2
-      t.string :style_effect, :null => false, :limit => 2
-      t.string :fee_code, :null => false, :limit => 2
-      t.string :tasked_at, :null => false, :limit => 10
-      t.string :file_name, :null => false
+      t.string :code, :limit => 15, :null => false
+      t.string :mobile, :limit => 11, :null => false
+      t.string :birth, :limit => 4, :null => false
+      t.string :source, :limit => 2     
+      t.string :design_type, :limit => 2
+      t.string :design_effect, :limit => 2
+      t.string :style_effect, :limit => 1
+      t.string :gallery_code, :limit => 2
+      t.string :fee_code, :limit => 2
+      t.string :file_name
+      t.string :task_type, :limit => 1, :null => false
+      t.integer :task_status, :default => 1
       t.timestamps
     end
   end

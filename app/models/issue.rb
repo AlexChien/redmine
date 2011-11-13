@@ -55,8 +55,8 @@ class Issue < ActiveRecord::Base
   attr_reader :current_journal
 
   validates_presence_of :subject, :priority, :project, :tracker, :author, :status
-  validates_presence_of :code, :approve_status, :task_type, :design_type,
-                        :design_effect, :style_effect, :fee_code, :tasked_at
+  validates_presence_of :code
+  validates_format_of :task_type, :with => /^ |1|2$/
 
   validates_length_of :subject, :maximum => 255
   validates_inclusion_of :done_ratio, :in => 0..100
@@ -87,11 +87,16 @@ class Issue < ActiveRecord::Base
   named_scope :in_code, lambda {|code|
     {:conditions => ["issues.code in (?)", code]}
   }
+  
+  named_scope :in_assigned_to, lambda {|assigned_to|
+    {:conditions => ["issues.assigned_to_id in (?)", assigned_to]}
+  }
 
   before_create :default_assign
   before_save :close_duplicates, :update_done_ratio_from_issue_status
   after_save :reschedule_following_issues, :update_nested_set_attributes, :update_parent_attributes, :create_journal
   after_destroy :update_parent_attributes
+  after_save :assign_user
 
   # Returns a SQL conditions string used to find all issues visible by the specified user
   def self.visible_condition(user, options={})
@@ -964,51 +969,41 @@ class Issue < ActiveRecord::Base
                                               group by s.id, s.is_closed, j.id")
   end
   
-  def show_approve_status
-    case self.approve_status
-    when "10"
-      "录入"
-    when "20"
-      "文件审核"
-    when "30"
-      "补件"
-    when "40"
-      "潜在风险"
-    when "50"
-      "异常申请"
-    when "60"
-      "信用审核"
-    when "70"
-      "拒绝"
-    when "80"
-      "取消"
-    when "90"
-      "已核准"
-    when "99"
-      "已生产卡片"
-    else
-      "未知"
+  def assign_user
+    if self.status == IssueStatus.find_by_code("VP01")
+      case self.design_type
+      when "01"
+        assign_to_design_or_csr("设计师","VP05")
+      when "02"
+        assign_to_design_or_csr("设计师","VP05")
+      when "03"
+        assign_to_design_or_csr("客服","VP03")
+      when "04"
+        is = IssueStatus.find_by_code("VP07")
+        self.update_attribute(:status,is) if is
+      end
     end
   end
   
-  def show_task_type
+  def assign_to_design_or_csr(role_name,is_code)
+    user_ids = Role.find_by_name(role_name).members.collect(&:user_id)
+    unless user_ids.empty?
+      is = IssueStatus.find_by_code(is_code)
+      self.update_attribute(:status,is) if is
+      
+      u = User.in_ids(user_ids).in_assigns_count(0).first
+      if u
+        self.update_attribute(:assigned_to_id,u.id)
+        u.update_attribute(:assigns_count,u.assigns_count+1)
+      else
+        us = User.in_ids(user_ids).first(:select=>"min(assigns_count) as m")
+        u = User.in_ids(user_ids).in_assigns_count(us.m.to_i).first
+        if u
+          self.update_attribute(:assigned_to_id,u.id)
+          u.update_attribute(:assigns_count,u.assigns_count+1) 
+        end
+      end
+    end
   end
   
-  def show_design_type
-  end
-  
-  def show_design_effect
-  end
-  
-  def show_style_effect
-  end
-  
-  def show_fee_code
-  end
-  
-  def show_tasked_at
-  end
-  
-  def show_source
-  end
 end
