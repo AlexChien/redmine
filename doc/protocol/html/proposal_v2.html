@@ -24,7 +24,7 @@ pre {
   Participants: Gloria, Amy, Danqing, Xiaomei, Zack<br />
   Version: 2.0<br />
   Last Modified at: 
-  <!-- #BeginDate format:Am3m -->11/10/2011  0:05<!-- #EndDate --> 
+  <!-- #BeginDate format:Am3m -->11/14/2011  18:06<!-- #EndDate --> 
 </p>
 <h1>索引</h1>
 <ul>
@@ -631,6 +631,7 @@ VP-STATS-201110.xls</td>
 <p>每行代表一条审核失败任务，序列化信息由以下几个部分组成：</p>
 <ul>
   <li>唯一编码（26位含占位符）</li>
+  <li>Promotion ID</li>
   <li>任务类型</li>
   <li>任务状态</li>
   <li>报告时间</li>
@@ -671,6 +672,31 @@ VP-STATS-201110.xls</td>
     <td>字符串</td>
     <td>否</td>
     <td>半角空格占位符</td>
+  </tr>
+  <tr>
+    <td rowspan="3" nowrap="nowrap">Promotion ID</td>
+    <td nowrap="nowrap"><a href="#source">来源标记</a></td>
+    <td>2</td>
+    <td>88</td>
+    <td>枚举值</td>
+    <td>否</td>
+    <td>网站上传或实物照片</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap"><a href="#DesignType">设计类型</a></td>
+    <td>2</td>
+    <td>01</td>
+    <td>枚举值</td>
+    <td>否</td>
+    <td>手绘Q图版、场景版等</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap"><a href="#DesignStyle">设计效果</a></td>
+    <td>2</td>
+    <td>02</td>
+    <td>枚举值</td>
+    <td>否</td>
+    <td>设计类型下具体的设计效果，如手绘Q图版下的卡通彩色，见附录，设计效果表应具有联合主键（设计类型ID和设计效果ID）</td>
   </tr>
   <tr>
     <td nowrap="nowrap">任务类型</td>
@@ -719,7 +745,7 @@ VP-STATS-201110.xls</td>
   </tr>
 </table>
 <p>文件内容示例 （<a href="0310-TASKFAILED-20111012.xls">下载</a>）</p>
-<p><img src="taskfailed.png" width="625" height="60" /></p>
+<p><img src="taskfailed.png" width="609" height="63" /></p>
 <!--
 <pre>186216833241202&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;VP0105图片未上传
 138216814240217&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;VP0302图片过于模糊，无法识别
