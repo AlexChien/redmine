@@ -14,15 +14,14 @@ class Spdcc
     begin
       check_dir
       dirp = Dir.open(INCOMING)
+      #先处理文件，再处理图片
       for f in dirp
         case f
         when /^\./, /~$/, /\.o/
-        when /^\d{15}(\d| ){9}.jpg$/
-          # 制图图片文件
-          parse_image(f)
         when /^0310-SKTWAIT-\d{8}$/
           # 处理卡片获批可制图工单文件
           parse_file(f)
+        when /^\d{15}(\d| ){9}.jpg$/
         else
           # 处理不可识别文件
           @logger.error "#{Time.now.to_s(:db)} #{f}"
@@ -30,6 +29,22 @@ class Spdcc
           FileUtils.mv("#{INCOMING}/#{f}","#{FAILED}/#{f}")
         end
       end
+      
+      dirp = Dir.open(INCOMING)
+      for f in dirp
+        case f
+        when /^\./, /~$/, /\.o/
+        when /^\d{15}(\d| ){9}.jpg$/
+          # 制图图片文件
+          parse_image(f)
+        else
+          # 处理不可识别文件
+          @logger.error "#{Time.now.to_s(:db)} #{f}"
+          print_error("filename error")
+          FileUtils.mv("#{INCOMING}/#{f}","#{FAILED}/#{f}")
+        end
+      end
+      
     rescue => e
       print_error(e)
     end
@@ -37,7 +52,10 @@ class Spdcc
   end
   
   def self.parse_image(f)
-    
+    code = f[0,15]
+    @i = Issue.in_code(code).first
+    @t = Task.in_code(code).in_task_type(0).last #找到换卡换图任务
+    read_image(@t,@i,0)
   end
   
   def self.parse_file(f)
@@ -86,12 +104,12 @@ class Spdcc
               print_error(@t.errors.full_messages.join("\n"))
             end
           end
-
         else
           print_error("format error")
         end
       end
       file.close
+      FileUtils.mv("#{INCOMING}/#{f}","#{SUCCESS}/#{f}")
     end
   end
   
@@ -122,7 +140,7 @@ class Spdcc
         file_name = image_name
 
         if t
-          if t.update_attributes(:task_status=>1,
+          if t.update_attributes(:task_status=>3,
                                   :source=>source,
                                   :design_type=>design_type,
                                   :design_effect=>design_effect,
@@ -168,7 +186,7 @@ class Spdcc
   end
 
 protected
-  def mv_image(image_name)
+  def self.mv_image(image_name)
     if File.exist?("#{SUCCESS}/#{image_name}")
       for i in 1..100
         if File.exist?("#{SUCCESS}/#{i}_#{image_name}")
