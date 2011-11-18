@@ -13,6 +13,7 @@ class CreateTasks < ActiveRecord::Migration
       t.string :file_name
       t.string :task_type, :limit => 1, :null => false
       t.integer :task_status, :default => 1
+      t.datetime :image_created_at
       t.timestamps
     end
   end
