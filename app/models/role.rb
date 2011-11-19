@@ -147,6 +147,19 @@ class Role < ActiveRecord::Base
   def self.anonymous
     find_or_create_system_role(BUILTIN_ANONYMOUS, 'Anonymous')
   end
+  
+  def find_min_assigns_user
+    user_ids = self.members.collect(&:user_id)
+    unless user_ids.empty?
+      u = User.in_ids(user_ids).in_assigns_count(0).first
+      if u
+      else
+        us = User.in_ids(user_ids).first(:select=>"min(assigns_count) as m")
+        u = User.in_ids(user_ids).in_assigns_count(us.m.to_i).first
+      end
+    end
+    u
+  end
 
 private
 

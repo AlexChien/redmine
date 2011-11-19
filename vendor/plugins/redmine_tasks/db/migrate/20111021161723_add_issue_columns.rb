@@ -9,6 +9,7 @@ class AddIssueColumns < ActiveRecord::Migration
     add_column :issues, :gallery_code, :string, :limit => 2
     add_column :issues, :fee_code, :string, :limit => 2
     add_column :issues, :task_type, :string, :limit => 1, :null => false
+    add_column :issues, :task_status, :integer, :default => 1
     add_column :issues, :created_source, :integer, :default => 0
   end
 
@@ -22,6 +23,7 @@ class AddIssueColumns < ActiveRecord::Migration
     remove_column  :issues, :gallery_code
     remove_column  :issues, :fee_code
     remove_column  :issues, :task_type
+    remove_column  :issues, :task_status
     remove_column  :issues, :created_source
   end
 end
