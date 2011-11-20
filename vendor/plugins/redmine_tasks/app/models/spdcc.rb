@@ -23,6 +23,7 @@ class Spdcc
   end
   
   def self.parse_image(f)
+    @logger.info "#{Time.now.to_s(:db)} #{f}"
     code = f[0,15]
     @i = Issue.in_code(code).first
     @t = Task.in_code(code).in_task_type(["",0]).last #找到换卡换图任务
@@ -69,6 +70,8 @@ class Spdcc
                 if @i.task_type == "1"
                   @j=Journal.create!(:journalized_id=>@i.id,:journalized_type=>"Issue",:user=>User.find(1))
                   JournalDetail.create(:journal=>@j,:property=>"attr",:prop_key=>"task_type",:value=>Issue::TASK_TYPES[@i.task_type])
+                  attachment = @i.attachments.last
+                  attachment.update_attributes(:final=>1,:output=>1) if attachment
                 else
                   read_image(@t,@i,task_type)
                 end
@@ -102,8 +105,8 @@ class Spdcc
     Task.transaction do
       old_status = i.status
       old_source = Issue::SOURCE[i.source]
-      old_design_type = i.tracker.name
-      old_design_effect = i.design.name
+      old_design_type = (i.tracker.nil? ? nil : i.tracker.name)
+      old_design_effect = (i.design.nil? ? nil : i.design.name)
       old_style_effect = Issue::STYLE_EFFECT[i.style_effect]
       old_gallery_code = i.gallery_code
       old_assigned_to_id = i.assigned_to_id
@@ -164,20 +167,23 @@ class Spdcc
       else
         t.update_attribute(:task_status,2) if t
         is = IssueStatus.find_by_code("VP02")
-        i.update_attribute(:status=>is,
-                            :task_statue=>2) if is
+        i.update_attributes(:status=>is,
+                            :task_status=>2) if is
       end
       
-      @j=Journal.create!(:journalized_id=>@i.id,:journalized_type=>"Issue",:user=>User.find(1))
-      JournalDetail.create(:journal=>@j,:property=>"attr",:prop_key=>"task_type",:value=>Issue::TASK_TYPES[@i.task_type]) if read_type == 0
-      JournalDetail.create(:journal=>@j,:property=>"attr",:prop_key=>"status_id",:old_value=>old_status,:value=>i.status) if old_status != i.status
-      JournalDetail.create(:journal=>@j,:property=>"attr",:prop_key=>"assigned_to_id",:value=>old_assigned_to_id,:value=>i.assigned_to_id) if old_assigned_to_id != i.assigned_to_id
-      JournalDetail.create(:journal=>@j,:property=>"attr",:prop_key=>"source",:old_value=>old_source,:value=>Issue::SOURCE[i.source]) if !source.blank? && old_source != Issue::SOURCE[i.source]
-      JournalDetail.create(:journal=>@j,:property=>"attr",:prop_key=>"design_type",:old_value=>old_design_type,:value=>i.tracker.name) if !design_type.blank? && old_design_type != i.tracker.name
-      JournalDetail.create(:journal=>@j,:property=>"attr",:prop_key=>"design_effect",:old_value=>old_design_effect,:value=>i.design.name) if !design_effect.blank? && old_design_effect != i.design.name
-      JournalDetail.create(:journal=>@j,:property=>"attr",:prop_key=>"style_effect",:old_value=>old_style_effect,:value=>Issue::STYLE_EFFECT[i.style_effect]) if !style_effect.blank? && old_style_effect != Issue::STYLE_EFFECT[i.style_effect]
-      JournalDetail.create(:journal=>@j,:property=>"attr",:prop_key=>"gallery_code",:old_value=>old_gallery_code,:value=>i.gallery_code) if !gallery_code.blank? && old_gallery_code != i.gallery_code
-      JournalDetail.create(:journal=>@j,:property=>"attachment",:prop_key=>attachment.id,:value=>attachment) if attachment
+      if old_status == i.status && i.status == IssueStatus.find_by_code("VP02")
+      else
+        @j=Journal.create!(:journalized_id=>@i.id,:journalized_type=>"Issue",:user=>User.find(1))
+        JournalDetail.create(:journal=>@j,:property=>"attr",:prop_key=>"task_type",:value=>Issue::TASK_TYPES[i.task_type]) if read_type == 0
+        JournalDetail.create(:journal=>@j,:property=>"attr",:prop_key=>"status_id",:old_value=>old_status,:value=>i.status) if old_status != i.status
+        JournalDetail.create(:journal=>@j,:property=>"attr",:prop_key=>"assigned_to_id",:value=>old_assigned_to_id,:value=>i.assigned_to_id) if old_assigned_to_id != i.assigned_to_id
+        JournalDetail.create(:journal=>@j,:property=>"attr",:prop_key=>"source",:old_value=>old_source,:value=>Issue::SOURCE[i.source]) if !source.blank? && old_source != Issue::SOURCE[i.source]
+        JournalDetail.create(:journal=>@j,:property=>"attr",:prop_key=>"design_type",:old_value=>old_design_type,:value=>i.tracker.name) if !design_type.blank? && old_design_type != i.tracker.name
+        JournalDetail.create(:journal=>@j,:property=>"attr",:prop_key=>"design_effect",:old_value=>old_design_effect,:value=>i.design.name) if !design_effect.blank? && old_design_effect != i.design.name
+        JournalDetail.create(:journal=>@j,:property=>"attr",:prop_key=>"style_effect",:old_value=>old_style_effect,:value=>Issue::STYLE_EFFECT[i.style_effect]) if !style_effect.blank? && old_style_effect != Issue::STYLE_EFFECT[i.style_effect]
+        JournalDetail.create(:journal=>@j,:property=>"attr",:prop_key=>"gallery_code",:old_value=>old_gallery_code,:value=>i.gallery_code) if !gallery_code.blank? && old_gallery_code != i.gallery_code
+        JournalDetail.create(:journal=>@j,:property=>"attachment",:prop_key=>attachment.id,:value=>attachment) if attachment
+      end
     end
   end
 

@@ -315,6 +315,10 @@ zh:
   field_design_effect: 设计效果
   field_style_effect: 版式类型
   field_gallery_code: 图库编号
+  field_finished_on: 制图成功时间
+  field_error_on: 制图失败时间
+  field_execption_on: 异常时间
+  field_status_change_on: 状态更新时间
 
   setting_app_title: 应用程序标题
   setting_app_subtitle: 应用程序子标题

@@ -94,8 +94,31 @@ class Issue < ActiveRecord::Base
     {:conditions => ["issues.code in (?)", code]}
   }
   
+  named_scope :in_status_code, lambda {|status_code|
+    {:include=>[:status],:conditions => ["issue_statuses.code in (?)", status_code]}
+  }
+  
+  named_scope :in_style_effect, lambda {|style_effect|
+    {:conditions => ["issues.style_effect in (?)", style_effect]}
+  }
+  
   named_scope :in_assigned_to, lambda {|assigned_to|
     {:conditions => ["issues.assigned_to_id in (?)", assigned_to]}
+  }
+  
+  named_scope :in_finished_on, lambda {|date|
+    {:conditions => ["issues.finished_on > ? and issues.finished_on <= ?", ((date-1).to_time + 19*60*60).to_s(:db),(date.to_time + 19*60*60).to_s(:db)]}
+  }
+  
+  named_scope :in_error_on, lambda {|date|
+    {:conditions => ["issues.error_on > ? and issues.error_on <= ?", ((date-1).to_time + 5*60*60).to_s(:db),(date.to_time + 5*60*60).to_s(:db)]}
+  }
+  
+  named_scope :in_execption_on, lambda {|date|
+    {:conditions => ["issues.execption_on > ? and issues.execption_on <= ?", ((date-1).to_time + 5*60*60).to_s(:db),(date.to_time + 5*60*60).to_s(:db)]}
+  }
+  named_scope :in_status_change_on, lambda {|date|
+    {:conditions => ["issues.status_change_on > ? and issues.status_change_on <= ?", ((date-1).to_time + 5*60*60).to_s(:db),(date.to_time + 5*60*60).to_s(:db)]}
   }
   
   TASK_TYPES = {
@@ -118,7 +141,7 @@ class Issue < ActiveRecord::Base
   before_save :close_duplicates, :update_done_ratio_from_issue_status
   after_save :reschedule_following_issues, :update_nested_set_attributes, :update_parent_attributes, :create_journal
   after_destroy :update_parent_attributes
-  before_save :assign_user
+  before_save :assign_user, :observe_finished_on, :observe_error_on, :observe_execption_on, :observe_status_change_on
 
   # Returns a SQL conditions string used to find all issues visible by the specified user
   def self.visible_condition(user, options={})
@@ -992,21 +1015,28 @@ class Issue < ActiveRecord::Base
   end
   
   def assign_user
-    old_user = User.find_by_id(self.assigned_to_id) unless self.assigned_to_id.blank?
-    case self.design_type
-    when "01"
-      assign_to_design_or_csr("设计师","VP05",old_user)
-    when "02"
-      assign_to_design_or_csr("设计师","VP05",old_user)
-    when "03"
-      assign_to_design_or_csr("客服","VP03",old_user)
-    when "04"
-      unless self.assigned_to_id.blank?
-        self.assigned_to_id = nil
-        old_user.update_attribute(:assigns_count,old_user.assigns_count-1) if old_user
+    #导入的话执行分配工作
+    if User.current == User.anonymous
+      if self.task_status == 3
+        old_user = User.find_by_id(self.assigned_to_id) unless self.assigned_to_id.blank?
+        case self.design_type
+        when "01"
+          assign_to_design_or_csr("设计师","VP05",old_user)
+        when "02"
+          assign_to_design_or_csr("设计师","VP05",old_user)
+        when "03"
+          assign_to_design_or_csr("客服","VP03",old_user)
+        when "04"
+          unless self.assigned_to_id.blank?
+            self.assigned_to_id = nil
+            old_user.update_attribute(:assigns_count,old_user.assigns_count-1) if old_user
+          end
+          is = IssueStatus.find_by_code("VP07")
+          self.status=is if is
+          attachment = self.attachments.last
+          attachment.update_attribute(:final,1) if attachment
+        end
       end
-      is = IssueStatus.find_by_code("VP07")
-      self.status=is if is
     end
   end
   
@@ -1030,6 +1060,25 @@ class Issue < ActiveRecord::Base
         end
       end
     end
+  end
+  
+  def observe_finished_on
+    is = IssueStatus.find_by_code("VP07")
+    self.finished_on = Time.now if self.status == is
+  end
+  
+  def observe_error_on
+    iss = IssueStatus.in_code(["VP00","VP04","VP06"])
+    self.error_on = Time.now if iss.include?(self.status)
+  end
+  
+  def observe_execption_on
+    is = IssueStatus.find_by_code("VP02")
+    self.execption_on = Time.now if self.status == is
+  end
+  
+  def observe_status_change_on
+    self.status_change_on = Time.now if status_id_changed?
   end
   
 end

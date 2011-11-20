@@ -19,11 +19,17 @@ class UpdateColumns < ActiveRecord::Migration
   
   
     add_column :users, :assigns_count, :integer, :default => 0
+    add_column :attachments, :created_source, :integer, :default =>1
+    add_column :attachments, :final, :integer, :default =>1
+    add_column :attachments, :output, :integer, :default =>0
   end
   
   def self.down
     change_column :issue_statuses, :fee_code, :string
     
     remove_column :users, :assigns_count
+    remove_column :attachments, :created_source
+    remove_column :attachments, :final
+    remove_column :attachments, :output
   end
 end

@@ -46,6 +46,14 @@ class Attachment < ActiveRecord::Base
   cattr_accessor :storage_path
   @@storage_path = Redmine::Configuration['attachments_storage_path'] || "#{Rails.root}/files"
 
+  named_scope :in_final, lambda {|final|
+    {:conditions => ["attachments.final in (?)", final]}
+  }
+  
+  named_scope :in_output, lambda {|output|
+    {:conditions => ["attachments.output in (?)", output]}
+  }
+
   before_save :files_to_final_location
   after_destroy :delete_from_disk
 
