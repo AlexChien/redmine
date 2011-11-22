@@ -56,7 +56,13 @@ class Issue < ActiveRecord::Base
 
   validates_presence_of :subject, :priority, :project, :tracker, :author, :status
   validates_presence_of :code
-  validates_format_of :task_type, :with => /^ |1|2$/
+  validates_presence_of :source, :design_type, :design_effect, :style_effect, :gallery_code, :if => "task_status == 3"
+  validates_format_of :source, :with => /^88|99$/, :if => "task_status == 3"
+  validates_format_of :design_type, :with => /^\d{2}$/, :if => "task_status == 3"
+  validates_format_of :design_effect, :with => /^\d{2}$/, :if => "task_status == 3"
+  validates_format_of :style_effect, :with => /^1|2$/, :if => "task_status == 3"
+  validates_format_of :gallery_code, :with => /^\d{2}$/, :if => "task_status == 3"
+  validates_format_of :task_type, :with => /^( |0|1)$/
 
   validates_length_of :subject, :maximum => 255
   validates_inclusion_of :done_ratio, :in => 0..100
@@ -88,15 +94,54 @@ class Issue < ActiveRecord::Base
     {:conditions => ["issues.code in (?)", code]}
   }
   
+  named_scope :in_status_code, lambda {|status_code|
+    {:include=>[:status],:conditions => ["issue_statuses.code in (?)", status_code]}
+  }
+  
+  named_scope :in_style_effect, lambda {|style_effect|
+    {:conditions => ["issues.style_effect in (?)", style_effect]}
+  }
+  
   named_scope :in_assigned_to, lambda {|assigned_to|
     {:conditions => ["issues.assigned_to_id in (?)", assigned_to]}
+  }
+  
+  named_scope :in_finished_on, lambda {|date|
+    {:conditions => ["issues.finished_on > ? and issues.finished_on <= ?", ((date-1).to_time + 19*60*60).to_s(:db),(date.to_time + 19*60*60).to_s(:db)]}
+  }
+  
+  named_scope :in_error_on, lambda {|date|
+    {:conditions => ["issues.error_on > ? and issues.error_on <= ?", ((date-1).to_time + 5*60*60).to_s(:db),(date.to_time + 5*60*60).to_s(:db)]}
+  }
+  
+  named_scope :in_execption_on, lambda {|date|
+    {:conditions => ["issues.execption_on > ? and issues.execption_on <= ?", ((date-1).to_time + 5*60*60).to_s(:db),(date.to_time + 5*60*60).to_s(:db)]}
+  }
+  named_scope :in_status_change_on, lambda {|date|
+    {:conditions => ["issues.status_change_on > ? and issues.status_change_on <= ?", ((date-1).to_time + 5*60*60).to_s(:db),(date.to_time + 5*60*60).to_s(:db)]}
+  }
+  
+  TASK_TYPES = {
+    ' ' => '新卡申请',
+    '0' => '换卡换图',
+    '1' => '换卡不换图'
+  }
+  
+  SOURCE = {
+    '88' => '网站上传',
+    '99' => '实物照片'
+  }
+  
+  STYLE_EFFECT = {
+    '1' => '横版',
+    '2' => '竖版'
   }
 
   before_create :default_assign
   before_save :close_duplicates, :update_done_ratio_from_issue_status
   after_save :reschedule_following_issues, :update_nested_set_attributes, :update_parent_attributes, :create_journal
   after_destroy :update_parent_attributes
-  after_save :assign_user
+  before_save :assign_user, :observe_finished_on, :observe_error_on, :observe_execption_on, :observe_status_change_on
 
   # Returns a SQL conditions string used to find all issues visible by the specified user
   def self.visible_condition(user, options={})
@@ -970,40 +1015,70 @@ class Issue < ActiveRecord::Base
   end
   
   def assign_user
-    if self.status == IssueStatus.find_by_code("VP01")
-      case self.design_type
-      when "01"
-        assign_to_design_or_csr("设计师","VP05")
-      when "02"
-        assign_to_design_or_csr("设计师","VP05")
-      when "03"
-        assign_to_design_or_csr("客服","VP03")
-      when "04"
-        is = IssueStatus.find_by_code("VP07")
-        self.update_attribute(:status,is) if is
+    #导入的话执行分配工作
+    if User.current == User.anonymous
+      if self.task_status == 3
+        old_user = User.find_by_id(self.assigned_to_id) unless self.assigned_to_id.blank?
+        case self.design_type
+        when "01"
+          assign_to_design_or_csr("设计师","VP05",old_user)
+        when "02"
+          assign_to_design_or_csr("设计师","VP05",old_user)
+        when "03"
+          assign_to_design_or_csr("客服","VP03",old_user)
+        when "04"
+          unless self.assigned_to_id.blank?
+            self.assigned_to_id = nil
+            old_user.update_attribute(:assigns_count,old_user.assigns_count-1) if old_user
+          end
+          is = IssueStatus.find_by_code("VP07")
+          self.status=is if is
+          attachment = self.attachments.last
+          attachment.update_attribute(:final,1) if attachment
+        end
       end
     end
   end
   
-  def assign_to_design_or_csr(role_name,is_code)
-    user_ids = Role.find_by_name(role_name).members.collect(&:user_id)
-    unless user_ids.empty?
-      is = IssueStatus.find_by_code(is_code)
-      self.update_attribute(:status,is) if is
-      
-      u = User.in_ids(user_ids).in_assigns_count(0).first
+  def assign_to_design_or_csr(role_name,is_code,old_user)
+    r = Role.find_by_name(role_name)
+    if r
+      user_ids = r.members.collect(&:user_id)
+      u = r.find_min_assigns_user
       if u
-        self.update_attribute(:assigned_to_id,u.id)
-        u.update_attribute(:assigns_count,u.assigns_count+1)
-      else
-        us = User.in_ids(user_ids).first(:select=>"min(assigns_count) as m")
-        u = User.in_ids(user_ids).in_assigns_count(us.m.to_i).first
-        if u
-          self.update_attribute(:assigned_to_id,u.id)
-          u.update_attribute(:assigns_count,u.assigns_count+1) 
+        is = IssueStatus.find_by_code(is_code)
+        self.status=is if is
+        if old_user
+          unless user_ids.include?(old_user.id)
+            self.assigned_to_id=u.id
+            u.update_attribute(:assigns_count,u.assigns_count+1)
+            old_user.update_attribute(:assigns_count,old_user.assigns_count-1)
+          end
+        else
+          self.assigned_to_id=u.id
+          u.update_attribute(:assigns_count,u.assigns_count+1)
         end
       end
     end
+  end
+  
+  def observe_finished_on
+    is = IssueStatus.find_by_code("VP07")
+    self.finished_on = Time.now if self.status == is
+  end
+  
+  def observe_error_on
+    iss = IssueStatus.in_code(["VP00","VP04","VP06"])
+    self.error_on = Time.now if iss.include?(self.status)
+  end
+  
+  def observe_execption_on
+    is = IssueStatus.find_by_code("VP02")
+    self.execption_on = Time.now if self.status == is
+  end
+  
+  def observe_status_change_on
+    self.status_change_on = Time.now if status_id_changed?
   end
   
 end

@@ -1,0 +1,11 @@
+<tr>
+    <th class="design_effect"><%=l(:field_design_effect)%>:</th><td class="design_effect"><%= @issue.design.blank? ? "-" : @issue.design.name %></td>
+    <th class="source"><%=l(:field_source)%>:</th>
+    <td class="source"><%= @issue.source.blank? ? "-" : Issue::SOURCE[@issue.source] %></td>
+</tr>
+
+<tr>
+    <th class="style_effect"><%=l(:field_style_effect)%>:</th><td class="style_effect"><%= @issue.style_effect.blank? ? "-" :Issue::STYLE_EFFECT[@issue.style_effect] %></td>
+    <th class="gallery_code"><%=l(:field_gallery_code)%>:</th>
+    <td class="gallery_code"><%= @issue.gallery_code.blank? ? "-" : @issue.gallery_code %></td>
+</tr>

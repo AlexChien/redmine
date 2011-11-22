@@ -595,7 +595,6 @@ class User < Principal
   def self.generate_salt
     ActiveSupport::SecureRandom.hex(16)
   end
-
 end
 
 class AnonymousUser < User
