@@ -6,6 +6,7 @@ gem 'rubytree', "0.5.2"
 gem 'coderay', '~>0.9.7'
 gem 'i18n', '0.4.2'
 gem 'rake', '0.8.7'
+gem 'mysql'
 
 # customization
 gem "spreadsheet"
