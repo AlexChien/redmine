@@ -37,7 +37,7 @@ GEM
       activeresource (= 2.3.11)
       activesupport (= 2.3.11)
       rake (>= 0.8.3)
-    rake (0.9.2.2)
+    rake (0.8.7)
     ruby-ole (1.2.11.2)
     rubytree (0.8.1)
     spreadsheet (0.6.5.9)
@@ -52,5 +52,6 @@ DEPENDENCIES
   coderay (~> 0.9.7)
   i18n (= 0.4.2)
   rails (= 2.3.11)
+  rake (= 0.8.7)
   rubytree
   spreadsheet
