@@ -24,7 +24,7 @@ pre {
   Participants: Gloria, Amy, Danqing, Xiaomei, Zack<br />
   Version: 2.0<br />
   Last Modified at: 
-  <!-- #BeginDate format:Am3m -->11/17/2011  17:02<!-- #EndDate --> 
+  <!-- #BeginDate format:Am3m -->11/30/2011  12:42<!-- #EndDate --> 
 </p>
 <h1>索引</h1>
 <ul>
@@ -41,7 +41,7 @@ pre {
 <p>VP放提供SFTP服务器，并提供浦发访问帐号。SFTP服务器上提供2个目录, incoming 及 output，浦发对这两个目录具有读写权利。</p>
 <p>incoming: 浦发发送给VP的卡制作相关物料文件、清单保存在此目录 <br />
   output: VP向浦发提交的卡制作物料、回执、报告保存在此目录。浦发完成读取后，可清空文件夹。</p>
-<p><img src="sftp.png" width="496" height="394" alt="SFTP 目录结构" /></p>
+<p><img src="sftp.png" width="513" height="592" alt="SFTP 目录结构" /></p>
 <hr />
 <h2><a name="Term" id="Term"></a>术语定义</h2>
 <p><strong>唯一编码</strong>：唯一编码是识别客户的唯一标识，共计26位，由11位手机号＋4位生日月日＋11位占位半角空格构成。其中有效字段长15位。在数据交互时，应用唯一编码时图片文件命名编码使用15位有效唯一编码；其他文本文件及报告中均使用26位唯一编码（含半角空格占位符，但状态变更任务清单除外）。</p>
@@ -158,7 +158,8 @@ pre {
     <td nowrap="nowrap">接收方</td>
     <td nowrap="nowrap">文件类型</td>
     <td nowrap="nowrap">后缀名</td>
-    <td nowrap="nowrap">示例</td>
+    <td nowrap="nowrap">投递目录<br />
+    示例</td>
   </tr>
   <tr class="spdcc2vp">
     <td><a href="#TaskPic">制图图片文件</a></td>
@@ -168,7 +169,8 @@ pre {
     <td>VP</td>
     <td>JPEG</td>
     <td>jpg</td>
-    <td>186216833241202880102100.jpg</td>
+    <td>/incoming/<br />
+    186216833241202880102100.jpg</td>
   </tr>
   <tr class="spdcc2vp">
     <td><a href="#SKTWAIT">卡片获批可制图工单文件</a></td>
@@ -178,7 +180,8 @@ pre {
     <td>VP</td>
     <td>TXT</td>
     <td>无</td>
-    <td>0310-SKTWAIT-20111012</td>
+    <td>/incoming/<br />
+    0310-SKTWAIT-20111012</td>
   </tr>
   <tr>
     <td><a href="#ResultPic">终稿图片文件</a></td>
@@ -188,7 +191,8 @@ pre {
     <td>浦发</td>
     <td>JPEG</td>
     <td>jpg</td>
-    <td>1862168332412021.jpg</td>
+    <td>/output/pictures/<br />
+    1862168332412021.jpg</td>
   </tr>
   <tr>
     <td><a href="#SKTRSP">终稿图片文件清单</a></td>
@@ -198,7 +202,8 @@ pre {
     <td>浦发</td>
     <td>TXT</td>
     <td>无</td>
-    <td>0310-SKTRSP-20111012</td>
+    <td>/output/pictures/<br />
+    0310-SKTRSP-20111012</td>
   </tr>
   <tr>
     <td><a href="#SKTRSPLAYOUT">终稿图片文件版式汇总清单</a></td>
@@ -208,7 +213,8 @@ pre {
     <td>浦发</td>
     <td>TXT</td>
     <td>无</td>
-    <td>0310-SKTRSPLAYOUT-20111012</td>
+    <td>/output/vptomkt/<br />
+    0310-SKTRSPLAYOUT-20111012</td>
   </tr>
   <tr>
     <td><a href="#TASKSTATUS">卡片获批可制图工单任务状态更新文件</a></td>
@@ -218,7 +224,8 @@ pre {
     <td>浦发</td>
     <td>TXT</td>
     <td>txt</td>
-    <td>0310-TASKSTATUS-20111012.txt</td>
+    <td>/output/picturestatus/<br />
+    0310-TASKSTATUS-20111012.txt</td>
   </tr>
   <tr>
     <td><p><a href="#TASKFAILED">制图失败工单报表</a></p></td>
@@ -228,7 +235,8 @@ pre {
     <td>浦发</td>
     <td>EXCEL</td>
     <td>xls</td>
-    <td>0310-TASKFAILED-20111012.xls</td>
+    <td>/output/vptocs/<br />
+    0310-TASKFAILED-20111012.xls</td>
   </tr>
   <tr>
     <td><a href="#TaskException">制图异常工单报表</a></td>
@@ -238,7 +246,8 @@ pre {
     <td>浦发</td>
     <td>EXCEL</td>
     <td>xls</td>
-    <td>0310-TASKEXCEPTION-20111012.xls</td>
+    <td>/output/vptocs/<br />
+    0310-TASKEXCEPTION-20111012.xls</td>
   </tr>
   <tr class="spdcc2vp">
     <td><a href="#TaskExceptionReply">制图异常工单报表结果回复</a></td>
@@ -248,7 +257,8 @@ pre {
     <td>VP</td>
     <td>EXCEL</td>
     <td>xls</td>
-    <td>0310-TASKEXCEPTION-REPLY-20111012.xls</td>
+    <td>/incoming/<br />
+    0310-TASKEXCEPTION-REPLY-20111012.xls</td>
   </tr>
   <tr>
     <td><a href="#stats">综合供应商报表</a></td>
@@ -258,7 +268,7 @@ pre {
     <td>浦发</td>
     <td>EXCEL</td>
     <td>xls</td>
-    <td>VP-STATS-20111012.xls<br />
+    <td>/output/vptomkt/<br />VP-STATS-20111012.xls<br />
 VP-STATS-201110.xls</td>
   </tr>
   <tr>
@@ -269,7 +279,7 @@ VP-STATS-201110.xls</td>
     <td>浦发</td>
     <td>EXCEL</td>
     <td>xls</td>
-    <td>VP-SETTLE-WEEKLY-20111012.xls<br />
+    <td>/output/vptomkt/<br />VP-SETTLE-WEEKLY-20111012.xls<br />
     VP-SETTLE-MONTHLY-201110.xls<br /></td>
   </tr>
 </table>
@@ -437,7 +447,7 @@ VP-STATS-201110.xls</td>
 186216833241202&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;2
 </pre>
 <h3><a name="SKTRSP" id="SKTRSP"></a>终稿图片文件清单（VP-&gt;浦发）</h3>
-<p>所在目录：sftp/output/</p>
+<p>所在目录：sftp/output/pictures/</p>
 <p>任务清单每日19:00投递一次，包含数据为前一天19:00至当日19:00期间制图成功的任务清单，命名规则0310-SKTRSP-YYYYMMDD（0310为银行代号，常量），文本文件无后缀名。内容每行写入一条任务，罗列当期终稿图片文件清单。任务清单附带制图成果图片文件，与清单中列举任务一一对应（终稿图片文件名可从任务信息中提取，详细见终稿图片文件）。</p>
 <p>举例：2011年10月12日终稿图片文件清单，文件名为 0310-SKTRSP-20111012</p>
 <p>每行代表一条允许制卡任务，序列化信息由以下几个部分组成：</p>
@@ -526,7 +536,7 @@ VP-STATS-201110.xls</td>
 <pre>186216833241202&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;8801021&not;&not;
 138216814240217&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;9904002&not;&not;</pre>
 <h3><a name="SKTRSPLAYOUT" id="SKTRSPLAYOUT"></a>允许制卡任务版式汇总清单（VP-&gt;浦发）</h3>
-<p>所在目录：sftp/output/</p>
+<p>所在目录：sftp/output/vptomkt/</p>
 <p>任务清单每日19:00投递一次，包含数据为前一天19:00至当日19:00期间制图成功的任务清单，命名规则0310-SKTRSPLAYOUT-YYYYMMDD（0310为银行代号，常量），文本文件无后缀名。内容包含当日允许制图任务的版式汇总信息。</p>
 <p>举例：2011年10月12日终稿图片文件清单，文件名为 0310-SKTRSPLAYOUT-20111012</p>
 <p>每行一条版式类型编号及数量，序列化信息由以下几个部分组成：</p>
@@ -574,7 +584,7 @@ VP-STATS-201110.xls</td>
 121
 231</pre>
 <h3><a name="ResultPic" id="ResultPic"></a>终稿图片文件（VP-&gt;浦发） </h3>
-<p>所在目录：sftp/output/</p>
+<p>所在目录：sftp/output/pictures/</p>
 <p>终稿图片文件每日每小时投递一次，当日19:00生成终稿图片文件清单文件。成果图片文件需提供以下信息，将这些信息进行序列化（简单的值字串拼合）后进行文件命名。序列化信息由以下几个部分组成：</p>
 <ul>
   <li>唯一编码（15位有效唯一编码）</li>
@@ -628,7 +638,7 @@ VP-STATS-201110.xls</td>
 <p>序列化后文件名长度 16 定长。</p>
 <p>VP系统在获取终稿图片文件清单后，遍历列举的任务列表提取对应制图文件时，需要对文件名进行简单处理。即任务信息中提取15位唯一编码＋版式类型＋.jpg后缀名即为对应的终稿图片文件。</p>
 <h3><a name="TASKFAILED" id="TASKFAILED"></a>制图失败工单报表 （VP-&gt;浦发）</h3>
-<p>所在目录：sftp/output/</p>
+<p>所在目录：sftp/output/vptocs/</p>
 <p>制图失败工单报表每日05:00投递一份（含昨日数据），命名规则0310-TASKFAILED-YYYYMMDD.xls（0310为银行代号，常量），EXCEL文件，后缀名xls。内容每行写入一条任务，罗列截止当日所有失败的任务清单（VP00图片未提交、VP04审核失败及VP06制图失败的任务集合）。</p>
 <p>举例：2011年10月12日制图失败工单报表 ，文件名为 0310-TASKFAILED-20111012.xls</p>
 <p>每行代表一条审核失败任务，序列化信息由以下几个部分组成：</p>
@@ -755,7 +765,7 @@ VP-STATS-201110.xls</td>
 </pre>
 -->
 <h3><a name="TaskException" id="TaskException"></a>制图异常工单报表 （VP-&gt;浦发）</h3>
-<p>所在目录：sftp/output/</p>
+<p>所在目录：sftp/output/vptocs/</p>
 <p>制图异常工单报表每日05:00投递一份（含昨日数据），命名规则0310-TASKEXCEPTION-YYYYMMDD（0310为银行代号，常量），EXCEL文件，后缀名xls。内容每行写入一条任务，罗列截止当日VP02（审核失败，收到多张照片）的任务清单。</p>
 <p>异常工单实际特指VP02(审核失败，收到多张照片)这种异常情况。指在获得“<a href="#SKTWAIT">卡片获批可制图工单文件</a>”清单时，查找获批卡片唯一编号对应的制图文件时，找到2张图片。这往往是由于客户在提交申请照片时，即从网上提交，同时也提交了实物照片，导致同一个唯一编码下有不同来源的图片，它们的设计需求可能相同可能不同。这导致系统或者人工无法判断客户的真实意愿。发生该意外时，向浦发客户提交异常工单报表，期望获得“<a href="#TaskExceptionReply">制图异常工单报表结果回复</a>”，得到客户的选择，从而由VP项目经理在系统中手动为该任务选择适用制图文件。</p>
 <p>举例：2011年10月12日制图异常工单报表 ，文件名为 0310-TASKEXCEPTION-20111012.xls</p>
@@ -847,7 +857,7 @@ VP-STATS-201110.xls</td>
 </pre>
 -->
 <h3><a name="TaskExceptionReply" id="TaskExceptionReply"></a>制图异常工单报表结果回复 （浦发-&gt;VP）</h3>
-<p>所在目录：sftp/output/</p>
+<p>所在目录：sftp/incoming/</p>
 <p>制图异常工单报表结果回复，每日由人工递送一份，以电子邮件形式发送给VP项目经理，作为指定日期异常工单的处理回复，命名规则0310-TASKEXCEPTION-REPLY-YYYYMMDD（0310为银行代号，常量），EXCEL文件，后缀名xls。内容每行写入一条异常任务及处理回复。由VP项目经理手动在系统中为异常任务指定客户选择的制图文件。</p>
 <p>举例：2011年10月12日制图异常工单报表 ，文件名为 0310-TASKEXCEPTION-REPLY-20111012.xls</p>
 <p>每行代表一条异常任务处理回复，序列化信息由以下几个部分组成：</p>
@@ -949,7 +959,7 @@ VP-STATS-201110.xls</td>
 </pre>
 -->
 <h3><a name="TASKSTATUS" id="TASKSTATUS"></a>卡片获批可制图工单任务状态更新文件（VP-&gt;浦发）</h3>
-<p>所在目录：sftp/output/</p>
+<p>所在目录：sftp/output/picturestatus/</p>
 <p>卡片获批可制图工单任务状态更新文件每日05:00投递一份（含昨日数据），命名规则0310-TASKSTATUS-YYYYMMDD（0310为银行代号，常量），文本文件，后缀名txt。内容每行写入一条任务，罗列卡片获批可制图工单任务状态更新文件，数据集包含在当日任务状态发生过变迁的所有任务。</p>
 <p>举例：2011年10月12日制图失败工单报表 ，文件名为 0310-TASKSTATUS-20111012.txt</p>
 <p>每行代表一条审核失败任务，序列化信息由以下几个部分组成：</p>
@@ -999,7 +1009,7 @@ VP-STATS-201110.xls</td>
 <pre>186216833241202VP0105
 138216814240217VP0302</pre>
 <h3><a name="Reports" id="Reports"></a>报告文件（VP-&gt;浦发）</h3>
-<p>所在目录：sftp/output/</p>
+<p>所在目录：sftp/output/vptomkt/</p>
 <p>报告包括以下几种类型：</p>
 <ul>
   <li><a name="stats" id="stats"></a>供应商综合报表</li>
