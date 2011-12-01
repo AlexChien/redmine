@@ -138,6 +138,20 @@ end
 
 after "deploy", "rvm:trust_rvmrc"
 
+desc "Synchronize production db data, this will overwrite staging data"
+task :sync_production_db, :roles => [:web] do
+  pwd = Capistrano::CLI.ui.ask "Enter password:"
+  run <<-EOF
+/usr/local/mysql/bin/mysqldump -uroot -p#{pwd} pcard_production --add-drop-table | /usr/local/mysql/bin/mysql -uroot -p#{pwd} pcard_staging
+EOF
+end
+
+desc "Synchronize production assets, not including tv flv files"
+task :sync_production_assets, :roles => [:web] do
+  run <<-EOF
+  EOF
+end
+
 ##For testing##
 
 #namespace :develop do
