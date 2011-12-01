@@ -1,4 +1,4 @@
-set :application, "pcard"
+set :application, "pcardstaging"
 set :deploy_to, "/usr/local/www/#{application}"
 #set :use_sudo, true
 set :use_sudo, false
@@ -17,7 +17,7 @@ set :rvm_type, :user
 # Your EC2 instances. Use the ec2-xxx....amazonaws.com hostname, not
 # any other name (in case you have your own DNS alias) or it won't
 # be able to resolve to the internal IP address.
-set :domain, "72.14.183.56"  #linode test instance
+set :domain, "112.64.179.10"  #vpremote
 # Whatever you set here will be taken set as the default RAILS_ENV value
 # on the server. Your app and your hourly/daily/weekly/monthly scripts
 # will run with RAILS_ENV set to this value.
@@ -75,7 +75,7 @@ namespace :deploy do
     ## create link for mongrel cluster
 
     # backup_db
-    # migrate
+    migrate
   end
 
   # customized tasks

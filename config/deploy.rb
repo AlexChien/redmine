@@ -1,4 +1,4 @@
-set :stages, %w(staging production temp temp2 vplocal vpremote)
+set :stages, %w(staging production temp2 vpremote vpremote_staging)
 set :default_stage, "vpremote"
 require 'capistrano/ext/multistage'
 
