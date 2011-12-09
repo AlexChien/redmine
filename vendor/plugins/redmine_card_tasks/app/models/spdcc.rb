@@ -26,7 +26,7 @@ class Spdcc
     @logger.info "#{Time.now.to_s(:db)} #{f}"
     code = f[0,15]
     @i = Issue.in_code(code).first
-    @t = Task.in_code(code).in_task_type(["",0]).last #找到换卡换图任务
+    @t = CardTask.in_code(code).in_task_type(["",0]).last #找到换卡换图任务
     read_image(@t,@i,0,1) if @i
   end
   
@@ -47,11 +47,11 @@ class Spdcc
           birth = line[11,4]
           task_type = line[26,1]
           @i = Issue.in_code(code).first
-          Task.transaction do
-            @t = Task.new(:code=>code,
-                         :mobile=>mobile,
-                         :birth=>birth,
-                         :task_type=>task_type)
+          CardTask.transaction do
+            @t = CardTask.new(:code=>code,
+                              :mobile=>mobile,
+                              :birth=>birth,
+                              :task_type=>task_type)
             if @t.save
               if @i
                 @i.task_type = task_type
@@ -102,7 +102,7 @@ class Spdcc
       end
     end
 
-    Task.transaction do
+    CardTask.transaction do
       old_status = i.status
       old_source = Issue::SOURCE[i.source]
       old_design_type = (i.tracker.nil? ? nil : i.tracker.name)
