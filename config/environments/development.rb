@@ -15,6 +15,6 @@ config.action_controller.perform_caching             = false
 # Don't care if the mailer can't send
 config.action_mailer.raise_delivery_errors = false
 
-config.gem 'capistrano'
-config.gem 'capistrano-ext', :lib => 'capistrano'
-config.gem 'mongrel_cluster', :lib => 'mongrel'
+# config.gem 'capistrano'
+# config.gem 'capistrano-ext', :lib => 'capistrano'
+# config.gem 'mongrel_cluster', :lib => 'mongrel'
