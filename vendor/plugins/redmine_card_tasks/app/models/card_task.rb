@@ -1,4 +1,4 @@
-class Task < ActiveRecord::Base
+class CardTask < ActiveRecord::Base
   unloadable
   
   validates_presence_of :code, :mobile, :birth
@@ -14,15 +14,15 @@ class Task < ActiveRecord::Base
   validates_format_of :task_type, :with => /^( |0|1)$/
     
   named_scope :in_code, lambda {|code|
-    {:conditions => ["tasks.code in (?)", code]}
+    {:conditions => ["card_tasks.code in (?)", code]}
   }
   
   named_scope :in_task_type, lambda {|task_type|
-    {:conditions => ["tasks.task_type in (?)", task_type]}
+    {:conditions => ["card_tasks.task_type in (?)", task_type]}
   }
   
   named_scope :not_in_design_type, lambda {|design_type|
-    {:conditions => ["tasks.design_type not in (?)", design_type]}
+    {:conditions => ["card_tasks.design_type not in (?)", design_type]}
   }
 
 end

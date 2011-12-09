@@ -1,6 +1,6 @@
-class CreateTasks < ActiveRecord::Migration
+class CreateCardTasks < ActiveRecord::Migration
   def self.up
-    create_table :tasks do |t|
+    create_table :card_tasks do |t|
       t.string :code, :limit => 15, :null => false
       t.string :mobile, :limit => 11, :null => false
       t.string :birth, :limit => 4, :null => false
@@ -19,6 +19,6 @@ class CreateTasks < ActiveRecord::Migration
   end
 
   def self.down
-    drop_table :tasks
+    drop_table :card_tasks
   end
 end

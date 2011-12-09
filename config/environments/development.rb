@@ -17,4 +17,4 @@ config.action_mailer.raise_delivery_errors = false
 
 config.gem 'capistrano'
 config.gem 'capistrano-ext', :lib => 'capistrano'
-config.gem 'mongrel_cluster', :lib => 'mongrel'
+# config.gem 'mongrel_cluster', :lib => 'mongrel'

@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class TaskTest < ActiveSupport::TestCase
-  fixtures :tasks
+class CardTaskTest < ActiveSupport::TestCase
+  fixtures :card_tasks
 
   # Replace this with your real tests.
   def test_truth
