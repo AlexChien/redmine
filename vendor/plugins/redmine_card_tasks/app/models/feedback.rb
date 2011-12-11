@@ -20,7 +20,7 @@ class Feedback
   def self.final_file
     to = Date.today
     file = File.new("#{OUTPUT_PICTURES}/0310-SKTRSP-#{to.to_s.gsub('-','')}","w")
-    Issue.in_status_code("VP07").in_finished_on(to).all.each do |i|
+    Issue.in_status_code(["VP07","VP08"]).in_finished_on(to).all.each do |i|
       file.write "#{i.code}           #{i.source}#{i.design_type}#{i.design_effect}  \n"
     end
     file.close
@@ -30,6 +30,7 @@ class Feedback
   def self.final_layout
     to = Date.today
     file = File.new("#{OUTPUT_VPTOMKT}/0310-SKTRSPLAYOUT-#{to.to_s.gsub('-','')}","w")
+    file.write "0#{Issue.in_status_code('VP08').in_finished_on(to).in_style_effect(0).count}\n"
     file.write "1#{Issue.in_status_code('VP07').in_finished_on(to).in_style_effect(1).count}\n"
     file.write "2#{Issue.in_status_code('VP07').in_finished_on(to).in_style_effect(2).count}\n"
     file.close
@@ -85,6 +86,28 @@ class Feedback
       file.write "#{i.code}#{i.status.code}#{i.description}\n"
     end
     file.close
+  end
+  
+  # 创建技术文档parse_log
+  def self.document_parse_log
+    d = Document.find_by_title("parse_log")
+    unless d
+      d = Document.create(:project=>Project.first,
+                          :category_id=>2,
+                          :title=>"parse_log",
+                          :description=>"卡片获批可制图工单文件->解析日志")
+    end
+    
+    file_name = "parse.log"
+    attachment = Attachment.new(:author=>User.find(1),
+                                 :container=>d,
+                                 :filename=>file_name,
+                                 :disk_filename=>Attachment.disk_filename(file_name),
+                                 :content_type=>Redmine::MimeType.of(file_name),
+                                 :filesize=>File.size("#{RAILS_ROOT}/log/#{file_name}"),
+                                 :created_source=>1)
+     FileUtils.copy("#{RAILS_ROOT}/log/#{file_name}","#{Attachment.storage_path}/#{Attachment.disk_filename(file_name)}")
+     attachment.save
   end
 
 protected
