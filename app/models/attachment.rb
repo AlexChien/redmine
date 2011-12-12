@@ -46,12 +46,23 @@ class Attachment < ActiveRecord::Base
   cattr_accessor :storage_path
   @@storage_path = Redmine::Configuration['attachments_storage_path'] || "#{Rails.root}/files"
 
+  named_scope :in_ids, lambda {|id|
+    {:conditions => ["attachments.id in (?)", id]}
+  }
+
   named_scope :in_final, lambda {|final|
     {:conditions => ["attachments.final in (?)", final]}
   }
   
   named_scope :in_output, lambda {|output|
     {:conditions => ["attachments.output in (?)", output]}
+  }
+  
+  named_scope :in_issue_status, lambda {|status_id|
+    {
+     :joins => "INNER JOIN issues ON (issues.id=attachments.container_id AND attachments.container_type = 'Issue')",
+     :conditions => ["issues.status_id in (?)", status_id]
+    }
   }
 
   before_save :files_to_final_location

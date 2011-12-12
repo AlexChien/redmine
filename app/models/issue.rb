@@ -1097,6 +1097,9 @@ class Issue < ActiveRecord::Base
         i.update_attributes(:style_effect=>'0',
                             :status=>is)
         
+        attachment = i.attachments.last
+        attachment.update_attribute(:final=>1) if attachment
+        
         j=Journal.create!(:journalized_id=>i.id,:journalized_type=>"Issue",:user=>User.find(1))
         JournalDetail.create(:journal=>j,:property=>"attr",:prop_key=>"status_id",:old_value=>old_status,:value=>i.status)
         JournalDetail.create(:journal=>j,:property=>"attr",:prop_key=>"style_effect",:old_value=>old_style_effect,:value=>Issue::STYLE_EFFECT[i.style_effect])

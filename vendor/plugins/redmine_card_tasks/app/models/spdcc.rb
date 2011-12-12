@@ -158,6 +158,9 @@ class Spdcc
                                         :content_type=>Redmine::MimeType.of(image_name),
                                         :filesize=>File.size("#{INCOMING}/#{image_name}"),
                                         :created_source=>1)
+            if design_type == "01" || design_type == "02"
+              attachment.final = 0
+            end
             FileUtils.copy("#{INCOMING}/#{image_name}","#{Attachment.storage_path}/#{Attachment.disk_filename(image_name)}")
             mv_image(image_name)
             attachment.save
