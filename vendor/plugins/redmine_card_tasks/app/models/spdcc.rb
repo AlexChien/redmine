@@ -38,7 +38,7 @@ class Spdcc
     else
       file=File.open("#{INCOMING}/#{f}")
       file.readlines.each do |l|
-        line = l.gsub("\n","")
+        line = l.gsub("\n","").gsub("\r","")
         @logger.info "#{Time.now.to_s(:db)} #{line}"
         case line
         when /^\d{15} {11}( |0|1)$/

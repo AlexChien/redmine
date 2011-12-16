@@ -31,7 +31,7 @@ class Feedback
     file_name = "0310-SKTRSP-#{to.to_s.gsub('-','')}"
     file = File.new("#{OUTPUT_PICTURES}/#{file_name}","w")
     Issue.in_status_code(["VP07","VP08"]).in_finished_on(to).all.each do |i|
-      file.write "#{i.code}           #{i.source}#{i.design_type}#{i.design_effect}  \n"
+      file.write "#{i.code}           #{i.source}#{i.design_type}#{i.design_effect}  \r\n"
     end
     file.close
     FileUtils.copy("#{OUTPUT_PICTURES}/#{file_name}","#{OUTPUT_BK_PICTURES}/#{file_name}")
@@ -42,9 +42,9 @@ class Feedback
     to = Date.today
     file_name = "0310-SKTRSPLAYOUT-#{to.to_s.gsub('-','')}"
     file = File.new("#{OUTPUT_VPTOMKT}/#{file_name}","w")
-    file.write "0#{Issue.in_status_code('VP08').in_finished_on(to).in_style_effect(0).count}\n"
-    file.write "1#{Issue.in_status_code('VP07').in_finished_on(to).in_style_effect(1).count}\n"
-    file.write "2#{Issue.in_status_code('VP07').in_finished_on(to).in_style_effect(2).count}\n"
+    file.write "0#{Issue.in_status_code('VP08').in_finished_on(to).in_style_effect(0).count}\r\n"
+    file.write "1#{Issue.in_status_code('VP07').in_finished_on(to).in_style_effect(1).count}\r\n"
+    file.write "2#{Issue.in_status_code('VP07').in_finished_on(to).in_style_effect(2).count}\r\n"
     file.close
     FileUtils.copy("#{OUTPUT_VPTOMKT}/#{file_name}","#{OUTPUT_BK_VPTOMKT}/#{file_name}")
   end
@@ -101,7 +101,7 @@ class Feedback
     file_name = "0310-TASKSTATUS-#{to.to_s.gsub('-','')}"
     file = File.new("#{OUTPUT_PICTURESTATUS}/#{file_name}","w")
     Issue.in_status_change_on(to).all.each do |i|
-      file.write "#{i.code}#{i.status.code}#{i.description}\n"
+      file.write "#{i.code}#{i.status.code}#{i.description}\r\n"
     end
     file.close
     FileUtils.copy("#{OUTPUT_PICTURESTATUS}/#{file_name}","#{OUTPUT_BK_PICTURESTATUS}/#{file_name}")
