@@ -60,7 +60,7 @@ class Issue < ActiveRecord::Base
   validates_format_of :source, :with => /^88|99$/, :if => "task_status == 3"
   validates_format_of :design_type, :with => /^\d{2}$/, :if => "task_status == 3"
   validates_format_of :design_effect, :with => /^\d{2}$/, :if => "task_status == 3"
-  validates_format_of :style_effect, :with => /^0|1|2$/, :if => "task_status == 3"
+  validates_format_of :style_effect, :with => /^0|1|2|3|4$/, :if => "task_status == 3"
   validates_format_of :gallery_code, :with => /^\d{2}$/, :if => "task_status == 3"
   validates_format_of :task_type, :with => /^( |0|1)$/
 
@@ -139,8 +139,10 @@ class Issue < ActiveRecord::Base
   
   STYLE_EFFECT = {
     '0' => '默认版式',
-    '1' => '横版',
-    '2' => '竖版'
+    '1' => '横板/蓝色logo',
+    '2' => '横板/白色logo',
+    '3' => '竖版/蓝色logo',
+    '4' => '竖版/白色logo'
   }
 
   before_create :default_assign

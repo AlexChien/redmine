@@ -45,6 +45,8 @@ class Feedback
     file.write "0#{Issue.in_status_code('VP08').in_finished_on(to).in_style_effect(0).count}\r\n"
     file.write "1#{Issue.in_status_code('VP07').in_finished_on(to).in_style_effect(1).count}\r\n"
     file.write "2#{Issue.in_status_code('VP07').in_finished_on(to).in_style_effect(2).count}\r\n"
+    file.write "3#{Issue.in_status_code('VP07').in_finished_on(to).in_style_effect(3).count}\r\n"
+    file.write "4#{Issue.in_status_code('VP07').in_finished_on(to).in_style_effect(4).count}\r\n"
     file.close
     FileUtils.copy("#{OUTPUT_VPTOMKT}/#{file_name}","#{OUTPUT_BK_VPTOMKT}/#{file_name}")
   end
