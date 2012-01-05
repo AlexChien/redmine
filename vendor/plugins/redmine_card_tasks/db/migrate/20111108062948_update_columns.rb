@@ -19,9 +19,9 @@ class UpdateColumns < ActiveRecord::Migration
   
   
     add_column :users, :assigns_count, :integer, :default => 0
-    add_column :attachments, :created_source, :integer, :default =>1
-    add_column :attachments, :final, :integer, :default =>1
-    add_column :attachments, :output, :integer, :default =>0
+    add_column :attachments, :created_source, :integer, :default => 0
+    add_column :attachments, :final, :integer, :default => 1
+    add_column :attachments, :output, :integer, :default => 0
   end
   
   def self.down

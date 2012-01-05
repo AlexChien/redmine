@@ -60,7 +60,7 @@ class Issue < ActiveRecord::Base
   validates_format_of :source, :with => /^88|99$/, :if => "task_status == 3"
   validates_format_of :design_type, :with => /^\d{2}$/, :if => "task_status == 3"
   validates_format_of :design_effect, :with => /^\d{2}$/, :if => "task_status == 3"
-  validates_format_of :style_effect, :with => /^1|2$/, :if => "task_status == 3"
+  validates_format_of :style_effect, :with => /^0|1|2|3|4$/, :if => "task_status == 3"
   validates_format_of :gallery_code, :with => /^\d{2}$/, :if => "task_status == 3"
   validates_format_of :task_type, :with => /^( |0|1)$/
 
@@ -117,8 +117,13 @@ class Issue < ActiveRecord::Base
   named_scope :in_execption_on, lambda {|date|
     {:conditions => ["issues.execption_on > ? and issues.execption_on <= ?", ((date-1).to_time + 5*60*60).to_s(:db),(date.to_time + 5*60*60).to_s(:db)]}
   }
+  
   named_scope :in_status_change_on, lambda {|date|
     {:conditions => ["issues.status_change_on > ? and issues.status_change_on <= ?", ((date-1).to_time + 5*60*60).to_s(:db),(date.to_time + 5*60*60).to_s(:db)]}
+  }
+  
+  named_scope :status_change_on_gt, lambda {|date|
+    {:conditions => ["issues.status_change_on <= ?", ((date-10).to_time + 5*60*60).to_s(:db)]}
   }
   
   TASK_TYPES = {
@@ -133,8 +138,11 @@ class Issue < ActiveRecord::Base
   }
   
   STYLE_EFFECT = {
-    '1' => '横版',
-    '2' => '竖版'
+    '0' => '默认版式',
+    '1' => '横板/蓝色logo',
+    '2' => '横板/白色logo',
+    '3' => '竖版/蓝色logo',
+    '4' => '竖版/白色logo'
   }
 
   before_create :default_assign
@@ -1063,8 +1071,8 @@ class Issue < ActiveRecord::Base
   end
   
   def observe_finished_on
-    is = IssueStatus.find_by_code("VP07")
-    self.finished_on = Time.now if self.status == is
+    iss = IssueStatus.in_code(["VP07","VP08"])
+    self.finished_on = Time.now if iss.include?(self.status)
   end
   
   def observe_error_on
@@ -1079,6 +1087,26 @@ class Issue < ActiveRecord::Base
   
   def observe_status_change_on
     self.status_change_on = Time.now if status_id_changed?
+  end
+  
+  # 任务的结束"VP00","VP02","VP04","VP06"
+  def self.observe_status_vp08
+    is = IssueStatus.find_by_code("VP08")
+    Issue.in_status_code(["VP00","VP02","VP04","VP06"]).status_change_on_gt(Date.today).all.each do |i|
+      if is
+        old_status = i.status
+        old_style_effect = Issue::STYLE_EFFECT[i.style_effect]
+        i.update_attributes(:style_effect=>'0',
+                            :status=>is)
+        
+        attachment = i.attachments.last
+        attachment.update_attribute(:final=>1) if attachment
+        
+        j=Journal.create!(:journalized_id=>i.id,:journalized_type=>"Issue",:user=>User.find(1))
+        JournalDetail.create(:journal=>j,:property=>"attr",:prop_key=>"status_id",:old_value=>old_status,:value=>i.status)
+        JournalDetail.create(:journal=>j,:property=>"attr",:prop_key=>"style_effect",:old_value=>old_style_effect,:value=>Issue::STYLE_EFFECT[i.style_effect])
+      end
+    end
   end
   
 end

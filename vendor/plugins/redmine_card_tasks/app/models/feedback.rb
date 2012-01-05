@@ -5,12 +5,21 @@ class Feedback
   OUTPUT_PICTURES = "#{Setting.spdcc_path}/sftp/output/pictures"
   OUTPUT_VPTOMKT = "#{Setting.spdcc_path}/sftp/output/vptomkt"
   
+  OUTPUT_BK = "#{Setting.spdcc_path}/output_bk"
+  OUTPUT_BK_PICTURESTATUS = "#{Setting.spdcc_path}/output_bk/picturestatus"
+  OUTPUT_BK_VPTOCS = "#{Setting.spdcc_path}/output_bk/vptocs"
+  OUTPUT_BK_PICTURES = "#{Setting.spdcc_path}/output_bk/pictures"
+  OUTPUT_BK_VPTOMKT = "#{Setting.spdcc_path}/output_bk/vptomkt"
+  
   # 终稿图片文件
   def self.final_image
-    Attachment.in_final(1).in_output(0).all(:order=>"created_on ASC").each do |a|
+    attachment_ids = Attachment.in_issue_status([50,70]).in_final(1).in_output(0).collect(&:id)
+    Attachment.in_ids(attachment_ids).all(:order=>"attachments.created_on ASC").each do |a|
       container = a.container
       if container.class == Issue
-        FileUtils.copy("#{Attachment.storage_path}/#{a.disk_filename}","#{OUTPUT_PICTURES}/#{container.code}#{container.style_effect}.jpg")
+        file_name = "#{container.code}#{container.style_effect}.jpg"
+        FileUtils.copy("#{Attachment.storage_path}/#{a.disk_filename}","#{OUTPUT_PICTURES}/#{file_name}")
+        FileUtils.copy("#{OUTPUT_PICTURES}/#{file_name}","#{OUTPUT_BK_PICTURES}/#{file_name}")
         a.update_attribute(:output,1)
       end
     end
@@ -19,20 +28,27 @@ class Feedback
   # 终稿图片文件 清单
   def self.final_file
     to = Date.today
-    file = File.new("#{OUTPUT_PICTURES}/0310-SKTRSP-#{to.to_s.gsub('-','')}","w")
-    Issue.in_status_code("VP07").in_finished_on(to).all.each do |i|
-      file.write "#{i.code}           #{i.source}#{i.design_type}#{i.design_effect}  \n"
+    file_name = "0310-SKTRSP-#{to.to_s.gsub('-','')}"
+    file = File.new("#{OUTPUT_PICTURES}/#{file_name}","w")
+    Issue.in_status_code(["VP07","VP08"]).in_finished_on(to).all.each do |i|
+      file.write "#{i.code}           #{i.source}#{i.design_type}#{i.design_effect}  \r\n"
     end
     file.close
+    FileUtils.copy("#{OUTPUT_PICTURES}/#{file_name}","#{OUTPUT_BK_PICTURES}/#{file_name}")
   end
   
   # 终稿图片文件 版式汇总清单
   def self.final_layout
     to = Date.today
-    file = File.new("#{OUTPUT_VPTOMKT}/0310-SKTRSPLAYOUT-#{to.to_s.gsub('-','')}","w")
-    file.write "1#{Issue.in_status_code('VP07').in_finished_on(to).in_style_effect(1).count}\n"
-    file.write "2#{Issue.in_status_code('VP07').in_finished_on(to).in_style_effect(2).count}\n"
+    file_name = "0310-SKTRSPLAYOUT-#{to.to_s.gsub('-','')}"
+    file = File.new("#{OUTPUT_VPTOMKT}/#{file_name}","w")
+    file.write "0#{Issue.in_status_code('VP08').in_finished_on(to).in_style_effect(0).count}\r\n"
+    file.write "1#{Issue.in_status_code('VP07').in_finished_on(to).in_style_effect(1).count}\r\n"
+    file.write "2#{Issue.in_status_code('VP07').in_finished_on(to).in_style_effect(2).count}\r\n"
+    file.write "3#{Issue.in_status_code('VP07').in_finished_on(to).in_style_effect(3).count}\r\n"
+    file.write "4#{Issue.in_status_code('VP07').in_finished_on(to).in_style_effect(4).count}\r\n"
     file.close
+    FileUtils.copy("#{OUTPUT_VPTOMKT}/#{file_name}","#{OUTPUT_BK_VPTOMKT}/#{file_name}")
   end
   
   # 制图失败工单报表
@@ -53,8 +69,10 @@ class Feedback
       replace << i.description
       sheet.row(index+1).replace(replace)
     end
-    file_name = "#{OUTPUT_VPTOCS}/0310-TASKFAILED-#{to.to_s.gsub('-','')}.xls"
-    book.write(file_name)
+    file_name = "0310-TASKFAILED-#{to.to_s.gsub('-','')}.xls"
+    file_path = "#{OUTPUT_VPTOCS}/#{file_name}"
+    book.write(file_path)
+    FileUtils.copy("#{OUTPUT_VPTOCS}/#{file_name}","#{OUTPUT_BK_VPTOCS}/#{file_name}")
   end
   
   # 制图异常工单报表
@@ -73,18 +91,44 @@ class Feedback
       replace << wait_time(i.created_on)
       sheet.row(index+1).replace(replace)
     end
-    file_name = "#{OUTPUT_VPTOCS}/0310-TASKEXCEPTION-#{to.to_s.gsub('-','')}.xls"
-    book.write(file_name)
+    file_name = "0310-TASKEXCEPTION-#{to.to_s.gsub('-','')}.xls"
+    file_path = "#{OUTPUT_VPTOCS}/#{file_name}"
+    book.write(file_path)
+    FileUtils.copy("#{OUTPUT_VPTOCS}/#{file_name}","#{OUTPUT_BK_VPTOCS}/#{file_name}")
   end
   
   # 卡片获批可制图工单任务状态更新文件
   def self.final_status_change
     to = Date.today
-    file = File.new("#{OUTPUT_PICTURESTATUS}/0310-TASKSTATUS-#{to.to_s.gsub('-','')}","w")
+    file_name = "0310-TASKSTATUS-#{to.to_s.gsub('-','')}"
+    file = File.new("#{OUTPUT_PICTURESTATUS}/#{file_name}","w")
     Issue.in_status_change_on(to).all.each do |i|
-      file.write "#{i.code}#{i.status.code}#{i.description}\n"
+      file.write "#{i.code}#{i.status.code}#{i.description}\r\n"
     end
     file.close
+    FileUtils.copy("#{OUTPUT_PICTURESTATUS}/#{file_name}","#{OUTPUT_BK_PICTURESTATUS}/#{file_name}")
+  end
+  
+  # 创建技术文档parse_log
+  def self.document_parse_log
+    d = Document.find_by_title("parse_log")
+    unless d
+      d = Document.create(:project=>Project.first,
+                          :category_id=>2,
+                          :title=>"parse_log",
+                          :description=>"卡片获批可制图工单文件->解析日志")
+    end
+    
+    file_name = "parse.log"
+    attachment = Attachment.new(:author=>User.find(1),
+                                 :container=>d,
+                                 :filename=>file_name,
+                                 :disk_filename=>Attachment.disk_filename(file_name),
+                                 :content_type=>Redmine::MimeType.of(file_name),
+                                 :filesize=>File.size("#{RAILS_ROOT}/log/#{file_name}"),
+                                 :created_source=>1)
+     FileUtils.copy("#{RAILS_ROOT}/log/#{file_name}","#{Attachment.storage_path}/#{Attachment.disk_filename(file_name)}")
+     attachment.save
   end
 
 protected

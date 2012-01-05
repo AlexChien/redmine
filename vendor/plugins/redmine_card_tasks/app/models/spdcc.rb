@@ -9,6 +9,8 @@ class Spdcc
   SUCCESS = "#{Setting.spdcc_path}/success"
   OUTPUT_BK = "#{Setting.spdcc_path}/output_bk"
   
+  MATCH_FORMAT = /^((13[0-9])|(15[0-9])|(18[0-9]))\d{8}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])(  |88|99)(  |\d{2})(  |\d{2})( |1|2|3|4)(  |\d{2}).jpg$/
+  
   def self.parse_task
     @logger.info "\n********** #{Time.now.to_s(:db)} parsing **********"
     begin
@@ -38,7 +40,7 @@ class Spdcc
     else
       file=File.open("#{INCOMING}/#{f}")
       file.readlines.each do |l|
-        line = l.gsub("\n","")
+        line = l.gsub("\n","").gsub("\r","")
         @logger.info "#{Time.now.to_s(:db)} #{line}"
         case line
         when /^\d{15} {11}( |0|1)$/
@@ -156,7 +158,11 @@ class Spdcc
                                         :filename=>image_name,
                                         :disk_filename=>Attachment.disk_filename(image_name),
                                         :content_type=>Redmine::MimeType.of(image_name),
-                                        :filesize=>File.size("#{INCOMING}/#{image_name}"))
+                                        :filesize=>File.size("#{INCOMING}/#{image_name}"),
+                                        :created_source=>1)
+            if design_type == "01" || design_type == "02"
+              attachment.final = 0
+            end
             FileUtils.copy("#{INCOMING}/#{image_name}","#{Attachment.storage_path}/#{Attachment.disk_filename(image_name)}")
             mv_image(image_name)
             attachment.save
@@ -216,7 +222,7 @@ protected
       case f
       when /^\./, /~$/, /\.o/
       when /^0310-SKTWAIT-\d{8}$/
-      when /^((13[0-9])|(15[0-9])|(18[0-9]))\d{8}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])(  |88|99)(  |\d{2})(  |\d{2})( |1|2)(  |\d{2}).jpg$/
+      when MATCH_FORMAT
       else
         mv_error_file(f)
       end
@@ -232,7 +238,7 @@ protected
       when /^0310-SKTWAIT-\d{8}$/
         # 处理卡片获批可制图工单文件
         parse_file(f)
-      when /^((13[0-9])|(15[0-9])|(18[0-9]))\d{8}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])(  |88|99)(  |\d{2})(  |\d{2})( |1|2)(  |\d{2}).jpg$/
+      when MATCH_FORMAT
       else
         mv_error_file(f)
       end
@@ -246,7 +252,7 @@ protected
       case f
       when /^\./, /~$/, /\.o/
       when /^0310-SKTWAIT-\d{8}$/  
-      when /^((13[0-9])|(15[0-9])|(18[0-9]))\d{8}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])(  |88|99)(  |\d{2})(  |\d{2})( |1|2)(  |\d{2}).jpg$/
+      when MATCH_FORMAT
         parse_image(f)
       else
         mv_error_file(f)
