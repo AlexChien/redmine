@@ -24,7 +24,7 @@ pre {
   Participants: Gloria, Amy, Danqing, Xiaomei, Zack<br />
   Version: 2.0<br />
   Last Modified at: 
-  <!-- #BeginDate format:Am3m -->11/30/2011  12:42<!-- #EndDate --> 
+  <!-- #BeginDate format:Am3m -->01/05/2012  15:32<!-- #EndDate --> 
 </p>
 <h1>索引</h1>
 <ul>
@@ -353,7 +353,7 @@ VP-STATS-201110.xls</td>
     <td>1</td>
     <td>枚举值</td>
     <td>否</td>
-    <td>横版、竖版</td>
+    <td>1 横版蓝色LOGO、2 横版白色LOGO、3 竖版蓝色LOGO、4 竖版白色LOGO</td>
   </tr>
   <tr>
     <td nowrap="nowrap">图库编号</td>
@@ -443,8 +443,8 @@ VP-STATS-201110.xls</td>
 <p>文件内容示例</p>
 <pre>
 186216833241202&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;
+186216833241202&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;0
 186216833241202&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;1
-186216833241202&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;2
 </pre>
 <h3><a name="SKTRSP" id="SKTRSP"></a>终稿图片文件清单（VP-&gt;浦发）</h3>
 <p>所在目录：sftp/output/pictures/</p>
@@ -561,7 +561,7 @@ VP-STATS-201110.xls</td>
     <td>1</td>
     <td>枚举值</td>
     <td>否</td>
-    <td>0 默认版面 1 横版、2 竖版</td>
+    <td>0 默认版式、1 横版蓝色LOGO、2 横版白色LOGO、3 竖版蓝色LOGO、4 竖版白色LOGO</td>
   </tr>
   <tr>
     <td nowrap="nowrap">数量</td>
@@ -582,7 +582,9 @@ VP-STATS-201110.xls</td>
 <pre>
 013
 121
-231</pre>
+231
+304
+407</pre>
 <h3><a name="ResultPic" id="ResultPic"></a>终稿图片文件（VP-&gt;浦发） </h3>
 <p>所在目录：sftp/output/pictures/</p>
 <p>终稿图片文件每日每小时投递一次，当日19:00生成终稿图片文件清单文件。成果图片文件需提供以下信息，将这些信息进行序列化（简单的值字串拼合）后进行文件命名。序列化信息由以下几个部分组成：</p>
@@ -624,7 +626,7 @@ VP-STATS-201110.xls</td>
     <td>1</td>
     <td>枚举值</td>
     <td>否</td>
-    <td>横版、竖版</td>
+    <td>0 默认版式、1 横版蓝色LOGO、2 横版白色LOGO、3 竖版蓝色LOGO、4 竖版白色LOGO</td>
   </tr>
   <tr>
     <td nowrap="nowrap">示例：</td>
@@ -1234,11 +1236,19 @@ VP-STATS-201110.xls</td>
   </tr>
   <tr>
     <td>1</td>
-    <td>横版</td>
+    <td>横版蓝色LOGO</td>
   </tr>
   <tr>
     <td>2</td>
-    <td>竖版</td>
+    <td>横版白色LOGO</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>竖版蓝色LOGO</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td>竖版白色LOGO</td>
   </tr>
 </table>
 <p><a name="TaskStatus" id="TaskStatus"></a>任务状态(issue_statuses)</p>
