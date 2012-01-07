@@ -109,7 +109,7 @@ class Feedback
     FileUtils.copy("#{OUTPUT_PICTURESTATUS}/#{file_name}","#{OUTPUT_BK_PICTURESTATUS}/#{file_name}")
   end
   
-  # 创建技术文档parse_log
+  # 创建技术文档parse_log,parse_error_log
   def self.document_parse_log
     d = Document.find_by_title("parse_log")
     unless d
@@ -118,17 +118,42 @@ class Feedback
                           :title=>"parse_log",
                           :description=>"卡片获批可制图工单文件->解析日志")
     end
-    
+
     file_name = "parse.log"
-    attachment = Attachment.new(:author=>User.find(1),
-                                 :container=>d,
-                                 :filename=>file_name,
-                                 :disk_filename=>Attachment.disk_filename(file_name),
-                                 :content_type=>Redmine::MimeType.of(file_name),
-                                 :filesize=>File.size("#{RAILS_ROOT}/log/#{file_name}"),
-                                 :created_source=>1)
-     FileUtils.copy("#{RAILS_ROOT}/log/#{file_name}","#{Attachment.storage_path}/#{Attachment.disk_filename(file_name)}")
-     attachment.save
+    d.attachments.destroy_all
+    if File.exist?("#{RAILS_ROOT}/log/#{file_name}")
+      attachment = Attachment.new(:author=>User.find(1),
+                                  :container=>d,
+                                  :filename=>file_name,
+                                  :disk_filename=>Attachment.disk_filename(file_name),
+                                  :content_type=>Redmine::MimeType.of(file_name),
+                                  :filesize=>File.size("#{RAILS_ROOT}/log/#{file_name}"),
+                                  :created_source=>1)
+      FileUtils.copy("#{RAILS_ROOT}/log/#{file_name}","#{Attachment.storage_path}/#{Attachment.disk_filename(file_name)}")
+      attachment.save
+    end
+
+    d2 = Document.find_by_title("parse_error_log")
+    unless d2
+      d2 = Document.create(:project=>Project.first,
+                            :category_id=>2,
+                            :title=>"parse_error_log",
+                            :description=>"卡片获批可制图工单文件->解析错误日志")
+    end
+
+    file_name = "parse_error.log"
+    d2.attachments.destroy_all
+    if File.exist?("#{RAILS_ROOT}/log/#{file_name}")
+      attachment = Attachment.new(:author=>User.find(1),
+                                  :container=>d2,
+                                  :filename=>file_name,
+                                  :disk_filename=>Attachment.disk_filename(file_name),
+                                  :content_type=>Redmine::MimeType.of(file_name),
+                                  :filesize=>File.size("#{RAILS_ROOT}/log/#{file_name}"),
+                                  :created_source=>1)
+      FileUtils.copy("#{RAILS_ROOT}/log/#{file_name}","#{Attachment.storage_path}/#{Attachment.disk_filename(file_name)}")
+      attachment.save
+    end
   end
 
 protected

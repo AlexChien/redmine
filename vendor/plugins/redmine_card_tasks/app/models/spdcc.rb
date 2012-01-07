@@ -2,6 +2,7 @@ require "logger"
 
 class Spdcc
   @logger ||= Logger.new("#{RAILS_ROOT}/log/parse.log")
+  @logger_error ||= Logger.new("#{RAILS_ROOT}/log/parse_error.log")
   
   INCOMING = "#{Setting.spdcc_path}/sftp/incoming"
   OUTPUT = "#{Setting.spdcc_path}/sftp/output"
@@ -78,13 +79,16 @@ class Spdcc
                   read_image(@t,@i,task_type)
                 end
               else
+                @logger_error.error "#{Time.now.to_s(:db)} #{f} #{line}"
                 print_error(@i.errors.full_messages.join("\n"))
               end
             else
+              @logger_error.error "#{Time.now.to_s(:db)} #{f} #{line}"
               print_error(@t.errors.full_messages.join("\n"))
             end
           end
         else
+          @logger_error.error "#{Time.now.to_s(:db)} #{f} #{line}"
           print_error("format error")
         end
       end
