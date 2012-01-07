@@ -1093,6 +1093,7 @@ class Issue < ActiveRecord::Base
   def self.observe_status_vp08
     is = IssueStatus.find_by_code("VP08")
     Issue.in_status_code(["VP00","VP02","VP04","VP06"]).status_change_on_gt(Date.today).all.each do |i|
+      puts i
       if is
         old_status = i.status
         old_style_effect = Issue::STYLE_EFFECT[i.style_effect]
@@ -1105,6 +1106,17 @@ class Issue < ActiveRecord::Base
         j=Journal.create!(:journalized_id=>i.id,:journalized_type=>"Issue",:user=>User.find(1))
         JournalDetail.create(:journal=>j,:property=>"attr",:prop_key=>"status_id",:old_value=>old_status,:value=>i.status)
         JournalDetail.create(:journal=>j,:property=>"attr",:prop_key=>"style_effect",:old_value=>old_style_effect,:value=>Issue::STYLE_EFFECT[i.style_effect])
+        
+        incoming = "#{Setting.spdcc_path}/sftp/incoming"
+        failed = "#{Setting.spdcc_path}/failed"
+        dirp = Dir.open(incoming)
+        for f in dirp
+          case f
+          when /^\./, /~$/, /\.o/
+          when /^#{i.code}(\d| ){9}.jpg$/
+            FileUtils.mv("#{incoming}/#{f}","#{failed}/#{f}")
+          end
+        end
       end
     end
   end
