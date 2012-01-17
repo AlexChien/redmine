@@ -1033,8 +1033,6 @@ class Issue < ActiveRecord::Base
         when "02"
           assign_to_design_or_csr("设计师","VP05",old_user)
         when "03"
-          assign_to_design_or_csr("客服","VP03",old_user)
-        when "04"
           unless self.assigned_to_id.blank?
             self.assigned_to_id = nil
             old_user.update_attribute(:assigns_count,old_user.assigns_count-1) if old_user
@@ -1043,6 +1041,8 @@ class Issue < ActiveRecord::Base
           self.status=is if is
           attachment = self.attachments.last
           attachment.update_attribute(:final,1) if attachment
+        when "04"
+          assign_to_design_or_csr("客服","VP03",old_user)
         end
       end
     end
