@@ -1072,17 +1072,17 @@ class Issue < ActiveRecord::Base
   
   def observe_finished_on
     iss = IssueStatus.in_code(["VP07","VP08"])
-    self.finished_on = Time.now if iss.include?(self.status)
+    self.finished_on = Time.now if iss.include?(self.status) && status_id_changed?
   end
   
   def observe_error_on
     iss = IssueStatus.in_code(["VP00","VP04","VP06"])
-    self.error_on = Time.now if iss.include?(self.status)
+    self.error_on = Time.now if iss.include?(self.status) && status_id_changed?
   end
   
   def observe_execption_on
     is = IssueStatus.find_by_code("VP02")
-    self.execption_on = Time.now if self.status == is
+    self.execption_on = Time.now if self.status == is && status_id_changed?
   end
   
   def observe_status_change_on
