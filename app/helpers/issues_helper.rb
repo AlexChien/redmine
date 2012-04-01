@@ -173,6 +173,10 @@ module IssuesHelper
       when ['project_id', 'status_id', 'tracker_id', 'assigned_to_id', 'priority_id', 'category_id', 'fixed_version_id'].include?(detail.prop_key)
         value = find_name_by_reflection(field, detail.value)
         old_value = find_name_by_reflection(field, detail.old_value)
+        
+      when detail.prop_key == 'style_effect'
+        value = Issue::STYLE_EFFECT[detail.value]
+        old_value = Issue::STYLE_EFFECT[detail.old_value]
 
       when detail.prop_key == 'estimated_hours'
         value = "%0.02f" % detail.value.to_f unless detail.value.blank?

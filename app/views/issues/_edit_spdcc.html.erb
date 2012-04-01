@@ -1,0 +1,5 @@
+<% if @issue.status == IssueStatus.find_by_code("VP05")%>
+<p><%= f.label :style_effect%><%= f.select :style_effect,[["横板/蓝色logo","1"],["横板/白色logo","2"],["竖版/蓝色logo","3"],["竖版/白色logo","4"]] %></p>
+<% else %>
+<p><%= f.label :style_effect%><%= Issue::STYLE_EFFECT[@issue.style_effect] %></p>
+<% end %>

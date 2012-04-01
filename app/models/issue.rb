@@ -329,6 +329,7 @@ class Issue < ActiveRecord::Base
     'description',
     'start_date',
     'due_date',
+    'style_effect',
     'done_ratio',
     'estimated_hours',
     'custom_field_values',

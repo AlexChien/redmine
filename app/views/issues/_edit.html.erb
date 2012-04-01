@@ -13,6 +13,9 @@
         <% end %>
         </legend>
         <%= render :partial => (@edit_allowed ? 'form' : 'form_update'), :locals => {:f => f} %>
+		
+		<%= render :partial=>"edit_spdcc", :locals => {:f => f} %>
+		
         </fieldset>
     <% end %>
     <% if authorize_for('timelog', 'edit') %>
@@ -31,7 +34,7 @@
         <% end %>
     </fieldset>
     <% end %>
-    
+
     <fieldset><legend><%= l(:field_notes) %></legend>
     <%= text_area_tag 'notes', @notes, :cols => 60, :rows => 10, :class => 'wiki-edit' %>
     <%= wikitoolbar_for 'notes' %>
