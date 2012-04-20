@@ -31,7 +31,7 @@ class Feedback
     file_name = "0310-SKTRSP-#{to.to_s.gsub('-','')}"
     file = File.new("#{OUTPUT_PICTURES}/#{file_name}","w")
     Issue.in_status_code(["VP07","VP08"]).in_finished_on(to).all.each do |i|
-      file.write "#{i.code}           #{i.source}#{i.design_type}#{i.design_effect}  \r\n"
+      file.write "#{i.code}           #{i.promotion_id}  \r\n"
     end
     file.close
     FileUtils.copy("#{OUTPUT_PICTURES}/#{file_name}","#{OUTPUT_BK_PICTURES}/#{file_name}")
@@ -61,7 +61,7 @@ class Feedback
     Issue.in_status_code(["VP00","VP04","VP06"]).in_error_on(to).all.each_with_index do |i,index|
       replace = []
       replace << i.code
-      replace << ("#{i.source}#{i.design_type}#{i.design_effect}")
+      replace << i.promotion_id
       replace << Issue::TASK_TYPES[i.task_type]
       replace << i.status.code
       replace << (i.error_on.to_s(:db))

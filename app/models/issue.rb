@@ -278,6 +278,13 @@ class Issue < ActiveRecord::Base
     issue
   end
 
+  def promotion_id
+    s = self.source.blank? ? '88' : self.source
+    dt = self.design_type.blank? ? '88' : self.design_type
+    de = self.design_effect.blank? ? '88' : self.design_effect
+    "#{s}#{dt}#{de}"
+  end
+
   def status_id=(sid)
     self.status = nil
     write_attribute(:status_id, sid)
