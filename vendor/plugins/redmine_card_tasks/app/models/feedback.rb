@@ -65,8 +65,19 @@ class Feedback
       replace << Issue::TASK_TYPES[i.task_type]
       replace << i.status.code
       replace << (i.error_on.to_s(:db))
-      replace << wait_time(i.created_on)
-      replace << i.description
+      # 首次任务使用创建日期，换卡换图，换卡不换图使用换卡任务的时间
+      if i.finished_on.blank?
+        replace << wait_time(i.created_on)
+      else
+        jd = JournalDetail.last(:conditions=>["property='attr' and prop_key='task_type' and journal_id in (?)",i.journals.collect(&:id)])
+        if jd
+          replace << wait_time(jd.journal.created_on)
+        else
+          replace << wait_time(i.created_on)
+        end
+      end
+      #VP00显示原因图片未提交，VP04,VP06显示原因为客户填写的原因
+      replace << (i.status.code == "VP00" ? i.status.name : i.description)
       sheet.row(index+1).replace(replace)
     end
     file_name = "0310-TASKFAILED-#{to.to_s.gsub('-','')}.xls"
@@ -88,7 +99,17 @@ class Feedback
       replace << Issue::TASK_TYPES[i.task_type]
       replace << i.status.code
       replace << (i.execption_on.to_s(:db))
-      replace << wait_time(i.created_on)
+      # 首次任务使用创建日期，换卡换图，换卡不换图使用换卡任务的时间
+      if i.finished_on.blank?
+        replace << wait_time(i.created_on)
+      else
+        jd = JournalDetail.last(:conditions=>["property='attr' and prop_key='task_type' and journal_id in (?)",i.journals.collect(&:id)])
+        if jd
+          replace << wait_time(jd.journal.created_on)
+        else
+          replace << wait_time(i.created_on)
+        end
+      end
       sheet.row(index+1).replace(replace)
     end
     file_name = "0310-TASKEXCEPTION-#{to.to_s.gsub('-','')}.xls"
@@ -157,8 +178,8 @@ class Feedback
   end
 
 protected
-  def self.wait_time(created_on)
-    days = (Date.today - created_on.to_date).to_i + 1
+  def self.wait_time(task_on)
+    days = (Date.today - task_on.to_date).to_i + 1
     days = 99 if days > 99
     '%02d' % days
   end
