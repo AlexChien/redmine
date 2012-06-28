@@ -70,13 +70,15 @@ class Spdcc
               end
               
               if @i.save
+                # 1:换卡换图从incoming目录中找图，从任务工作图片中24小时内找图
+                # 0:换卡不换图从任务终稿图片中找图
                 if @i.task_type == "1"
+                  read_image(@t,@i,task_type)
+                else 
                   @j=Journal.create!(:journalized_id=>@i.id,:journalized_type=>"Issue",:user=>User.find(1))
                   JournalDetail.create(:journal=>@j,:property=>"attr",:prop_key=>"task_type",:value=>Issue::TASK_TYPES[@i.task_type])
                   attachment = @i.attachments.last
                   attachment.update_attributes(:final=>1,:output=>1) if attachment
-                else
-                  read_image(@t,@i,task_type)
                 end
               else
                 @logger_error.error "#{Time.now.to_s(:db)} #{f} #{line}"

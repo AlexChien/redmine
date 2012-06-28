@@ -128,8 +128,8 @@ class Issue < ActiveRecord::Base
   
   TASK_TYPES = {
     ' ' => '新卡申请',
-    '0' => '换卡换图',
-    '1' => '换卡不换图'
+    '0' => '换卡不换图',
+    '1' => '换卡换图'
   }
   
   SOURCE = {
