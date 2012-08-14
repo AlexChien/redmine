@@ -77,8 +77,9 @@ class Spdcc
                 else 
                   @j=Journal.create!(:journalized_id=>@i.id,:journalized_type=>"Issue",:user=>User.find(1))
                   JournalDetail.create(:journal=>@j,:property=>"attr",:prop_key=>"task_type",:value=>Issue::TASK_TYPES[@i.task_type])
+                  # 把图片放到待输入队列
                   attachment = @i.attachments.last
-                  attachment.update_attributes(:final=>1,:output=>1) if attachment
+                  attachment.update_attributes(:final=>1,:output=>0) if attachment
                 end
               else
                 @logger_error.error "#{Time.now.to_s(:db)} #{f} #{line}"
