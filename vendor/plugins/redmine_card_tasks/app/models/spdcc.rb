@@ -72,7 +72,8 @@ class Spdcc
               if @i.save
                 # 1:换卡换图从incoming目录中找图，从任务工作图片中24小时内找图
                 # 0:换卡不换图从任务终稿图片中找图
-                if @i.task_type == "1"
+                # 空格:新卡生成从incoming目录中找图，从任务工作图片中24小时内找图
+                if @i.task_type == "1" || @i.task_type == " "
                   read_image(@t,@i,task_type)
                 else 
                   @j=Journal.create!(:journalized_id=>@i.id,:journalized_type=>"Issue",:user=>User.find(1))
