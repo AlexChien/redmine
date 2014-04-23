@@ -24,7 +24,7 @@ group :development, :test do
   gem 'ZenTest'
   gem 'autotest-rails'
   gem 'autotest-growl'
-  gem 'autotest-fsevent'
+  # gem 'autotest-fsevent'
 end
 
 group :staging do

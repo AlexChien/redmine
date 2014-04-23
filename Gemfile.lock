@@ -12,8 +12,6 @@ GEM
     activeresource (2.3.11)
       activesupport (= 2.3.11)
     activesupport (2.3.11)
-    autotest-fsevent (0.2.7)
-      sys-uname
     autotest-growl (0.2.16)
     autotest-rails (4.1.1)
       ZenTest (= 4.5)
@@ -79,14 +77,12 @@ GEM
     shoulda (2.10.3)
     spreadsheet (0.6.5.9)
       ruby-ole (>= 1.0)
-    sys-uname (0.8.6)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   ZenTest
-  autotest-fsevent
   autotest-growl
   autotest-rails
   capistrano
