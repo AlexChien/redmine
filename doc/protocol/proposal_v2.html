@@ -6,12 +6,12 @@
 <title>浦发个性信用卡制卡任务交互协议</title>
 <style type="text/css" media="all">
 #fe_table tr.spdcc2vp td{
-	background-color:#eeeeee;
+  background-color:#eeeeee;
 }
 pre {
-	padding:10px;
-	border:1px #333 solid;
-	background:#eeeeee;
+  padding:10px;
+  border:1px #333 solid;
+  background:#eeeeee;
 }
 .close_won{color:green;}
 .close_lost {color:red;}
@@ -23,8 +23,8 @@ pre {
 <p>Drafted by: Alex Chien<br />
   Participants: Gloria, Amy, Danqing, Xiaomei, Zack<br />
   Version: 2.0<br />
-  Last Modified at: 
-  <!-- #BeginDate format:Am3m -->04/20/2012  17:29<!-- #EndDate --> 
+  Last Modified at:
+  <!-- #BeginDate format:Am3m -->11/06/2012  21:07<!-- #EndDate -->
 </p>
 <h1>索引</h1>
 <ul>
@@ -186,7 +186,7 @@ pre {
   <tr>
     <td><a href="#ResultPic">终稿图片文件</a></td>
     <td>设计师制图后生成的成果文件，文件名进过编码嵌入唯一编码、Promotion ID，版式代码及Fee Code。</td>
-    <td>每小时</td>
+    <td>每日19:00，含前24小时数据</td>
     <td>VP</td>
     <td>浦发</td>
     <td>JPEG</td>
@@ -533,8 +533,8 @@ VP-STATS-201110.xls</td>
 <p>序列化后每行任务信息长度 34 定长。</p>
 <p>解析后，创建制图任务的开始时间（创建时间）按“允许任务清单”文件名中的日期设定。</p>
 <p>文件内容示例</p>
-<pre>186216833241202&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;8801021&not;&not;
-138216814240217&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;9904002&not;&not;</pre>
+<pre>186216833241202&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;880102&not;&not;
+138216814240217&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;&not;990400&not;&not;</pre>
 <h3><a name="SKTRSPLAYOUT" id="SKTRSPLAYOUT"></a>允许制卡任务版式汇总清单（VP-&gt;浦发）</h3>
 <p>所在目录：sftp/output/vptomkt/</p>
 <p>任务清单每日19:00投递一次，包含数据为前一天19:00至当日19:00期间制图成功的任务清单，命名规则0310-SKTRSPLAYOUT-YYYYMMDD（0310为银行代号，常量），文本文件无后缀名。内容包含当日允许制图任务的版式汇总信息。</p>
@@ -638,7 +638,7 @@ VP-STATS-201110.xls</td>
   </tr>
 </table>
 <p>序列化后文件名长度 16 定长。</p>
-<p>VP系统在获取终稿图片文件清单后，遍历列举的任务列表提取对应制图文件时，需要对文件名进行简单处理。即任务信息中提取15位唯一编码＋版式类型＋.jpg后缀名即为对应的终稿图片文件。</p>
+<p>浦发系统在获取终稿图片文件清单后，遍历列举的任务列表提取对应制图文件时，需要对文件名进行简单处理。即任务信息中提取15位唯一编码＋版式类型＋.jpg后缀名即为对应的终稿图片文件。</p>
 <h3><a name="TASKFAILED" id="TASKFAILED"></a>制图失败工单报表 （VP-&gt;浦发）</h3>
 <p>所在目录：sftp/output/vptocs/</p>
 <p>制图失败工单报表每日05:00投递一份（含昨日数据），命名规则0310-TASKFAILED-YYYYMMDD.xls（0310为银行代号，常量），EXCEL文件，后缀名xls。内容每行写入一条任务，罗列截止当日所有失败的任务清单（VP00图片未提交、VP04审核失败及VP06制图失败的任务集合）。</p>
@@ -1116,11 +1116,11 @@ VP-STATS-201110.xls</td>
   </tr>
   <tr>
     <td>0</td>
-    <td>换卡换图</td>
+    <td>换卡不换图</td>
   </tr>
   <tr>
     <td>1</td>
-    <td>换卡不换图</td>
+    <td>换卡换图</td>
   </tr>
 </table>
 <p><a name="source" id="source"></a>来源标记(source)</p>

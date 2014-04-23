@@ -12,7 +12,7 @@ issue_statuses = %w(VP00图片未提交 VP01待审核 VP02审核失败，收到�
 @line = "\n"
 rows = []
 
-(0..60).each do |date_offset|
+(0..2).each do |date_offset|
   date = (Time.now-86400*date_offset).strftime("%Y-%m-%d").to_s
   task_types.each do |tt|
     design_types.each do |dt|

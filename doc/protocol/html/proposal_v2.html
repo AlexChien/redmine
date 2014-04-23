@@ -6,12 +6,12 @@
 <title>浦发个性信用卡制卡任务交互协议</title>
 <style type="text/css" media="all">
 #fe_table tr.spdcc2vp td{
-	background-color:#eeeeee;
+  background-color:#eeeeee;
 }
 pre {
-	padding:10px;
-	border:1px #333 solid;
-	background:#eeeeee;
+  padding:10px;
+  border:1px #333 solid;
+  background:#eeeeee;
 }
 .close_won{color:green;}
 .close_lost {color:red;}
@@ -23,8 +23,8 @@ pre {
 <p>Drafted by: Alex Chien<br />
   Participants: Gloria, Amy, Danqing, Xiaomei, Zack<br />
   Version: 2.0<br />
-  Last Modified at: 
-  <!-- #BeginDate format:Am3m -->01/05/2012  15:32<!-- #EndDate --> 
+  Last Modified at:
+  <!-- #BeginDate format:Am3m -->06/27/2012  16:42<!-- #EndDate -->
 </p>
 <h1>索引</h1>
 <ul>
@@ -186,7 +186,7 @@ pre {
   <tr>
     <td><a href="#ResultPic">终稿图片文件</a></td>
     <td>设计师制图后生成的成果文件，文件名进过编码嵌入唯一编码、Promotion ID，版式代码及Fee Code。</td>
-    <td>每小时</td>
+    <td>每日19:00，含前24小时数据</td>
     <td>VP</td>
     <td>浦发</td>
     <td>JPEG</td>
@@ -638,7 +638,7 @@ VP-STATS-201110.xls</td>
   </tr>
 </table>
 <p>序列化后文件名长度 16 定长。</p>
-<p>VP系统在获取终稿图片文件清单后，遍历列举的任务列表提取对应制图文件时，需要对文件名进行简单处理。即任务信息中提取15位唯一编码＋版式类型＋.jpg后缀名即为对应的终稿图片文件。</p>
+<p>浦发系统在获取终稿图片文件清单后，遍历列举的任务列表提取对应制图文件时，需要对文件名进行简单处理。即任务信息中提取15位唯一编码＋版式类型＋.jpg后缀名即为对应的终稿图片文件。</p>
 <h3><a name="TASKFAILED" id="TASKFAILED"></a>制图失败工单报表 （VP-&gt;浦发）</h3>
 <p>所在目录：sftp/output/vptocs/</p>
 <p>制图失败工单报表每日05:00投递一份（含昨日数据），命名规则0310-TASKFAILED-YYYYMMDD.xls（0310为银行代号，常量），EXCEL文件，后缀名xls。内容每行写入一条任务，罗列截止当日所有失败的任务清单（VP00图片未提交、VP04审核失败及VP06制图失败的任务集合）。</p>
@@ -1101,7 +1101,7 @@ VP-STATS-201110.xls</td>
     <td>&nbsp;</td>
   </tr>
 </table>
-<p>失败结束的任务会在制图失败/异常报表中得到呈现，通过得到的反馈及浦发后续的数据跟进，对任务信息进行更新，从而最终将任务转换为成功结束。但在某些情况下，失败/异常任务一直得不到跟进处理（如客户迟迟不提供反馈或上传更新的图片）时，失败任务将永久留在系统中并不断在错误/异常报告中出现，而且卡片也一直无法制作发放，因此对每种失败结束的任务定义了忍耐期限(T+x)，当任务存续时间超过该设置，则任务自动标记为成功结束，适用默认卡面设计参数进行制作（版式类型更新为0）。为了与常规成功结束的任务有所区分，适用VP08状态值。这里的T是任务创建日，即任务第一次在“<a href="#SKTWAIT">卡片获批可制图工单文件</a>”中以新卡申请状态出现时的日期。x是值在任务创建日开始到现在的天数。目前所有忍耐期限均为10天（工作日，去除法定节假日）。</p>
+<p>失败结束的任务会在制图失败/异常报表中得到呈现，通过得到的反馈及浦发后续的数据跟进，对任务信息进行更新，从而最终将任务转换为成功结束。但在某些情况下，失败/异常任务一直得不到跟进处理（如客户迟迟不提供反馈或上传更新的图片）时，失败任务将永久留在系统中并不断在错误/异常报告中出现，而且卡片也一直无法制作发放，因此对每种失败结束的任务定义了忍耐期限(T+x)，当任务存续时间超过该设置，则任务自动标记为成功结束，适用默认卡面设计参数进行制作（版式类型更新为0，Promotion ID为888888）。为了与常规成功结束的任务有所区分，适用VP08状态值。这里的T是任务创建日，即任务第一次在“<a href="#SKTWAIT">卡片获批可制图工单文件</a>”中以新卡申请状态出现时的日期。x是值在任务创建日开始到现在的天数。目前所有忍耐期限均为10天（工作日，去除法定节假日）。</p>
 <hr />
 <h2><a name="enum" id="enum"></a>附录：枚举值</h2>
 <p><a name="TaskType" id="TaskType"></a>任务类型(task_types)</p>
@@ -1116,11 +1116,11 @@ VP-STATS-201110.xls</td>
   </tr>
   <tr>
     <td>0</td>
-    <td>换卡换图</td>
+    <td>换卡不换图</td>
   </tr>
   <tr>
     <td>1</td>
-    <td>换卡不换图</td>
+    <td>换卡换图</td>
   </tr>
 </table>
 <p><a name="source" id="source"></a>来源标记(source)</p>

@@ -11,8 +11,22 @@ gem 'mysql'
 # customization
 gem "spreadsheet"
 
-group :development do
+group :development, :test do
   gem 'capistrano'
   gem 'capistrano-ext'
   # gem 'mongrel_cluster', :lib => 'mongrel'
+  gem 'shoulda', '~>2.10.3'
+  gem 'edavis10-object_daddy'
+  gem 'mocha'
+
+  gem 'rspec', '~>2.7.0'
+  gem 'rcov'
+  gem 'ZenTest'
+  gem 'autotest-rails'
+  gem 'autotest-growl'
+  gem 'autotest-fsevent'
+end
+
+group :staging do
+  gem 'mongrel_cluster'
 end

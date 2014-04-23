@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data>
+  <row>
+    <!-- dt: date-->
+    <dt>2011-01-23</dt>
+    <!-- tt: TaskType -->
+    <tt>新卡申请</tt>
+    <!-- dt: Design Type -->
+    <dt>手绘Q图卡通彩色</dt>
+    <!-- lt: Layout -->
+    <lt>横版</lt>
+    <!-- is: Issue Status -->
+    <is>VP01待审核</is>
+    <!-- count: 数量 -->
+    <count>3</count>
+  </row>
+  <row>
+    ...
+  </row>
+</data>
