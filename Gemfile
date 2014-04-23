@@ -1,4 +1,5 @@
-source "http://rubygems.org"
+source 'http://ruby.taobao.org'
+# source "http://rubygems.org"
 
 # redmine core
 gem "rails", "2.3.11"
@@ -14,6 +15,9 @@ gem "spreadsheet"
 group :development, :test do
   gem 'capistrano'
   gem 'capistrano-ext'
+  gem 'capistrano-ext'
+  gem "capistrano_colors"
+  gem 'rvm-capistrano'
   # gem 'mongrel_cluster', :lib => 'mongrel'
   gem 'shoulda', '~>2.10.3'
   gem 'edavis10-object_daddy'
