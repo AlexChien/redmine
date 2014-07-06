@@ -60,7 +60,7 @@ class Issue < ActiveRecord::Base
   validates_format_of :source, :with => /^88|99$/, :if => "task_status == 3"
   validates_format_of :design_type, :with => /^\d{2}$/, :if => "task_status == 3"
   validates_format_of :design_effect, :with => /^\d{2}$/, :if => "task_status == 3"
-  validates_format_of :style_effect, :with => /^0|1|2|3|4$/, :if => "task_status == 3"
+  validates_format_of :style_effect, :with => /^0|1|2|3|4|A|B|C|D|E$/, :if => "task_status == 3"
   validates_format_of :gallery_code, :with => /^\d{2}$/, :if => "task_status == 3"
   validates_format_of :task_type, :with => /^( |0|1)$/
 
@@ -142,7 +142,12 @@ class Issue < ActiveRecord::Base
     '1' => '横板/蓝色logo',
     '2' => '横板/白色logo',
     '3' => '竖版/蓝色logo',
-    '4' => '竖版/白色logo'
+    '4' => '竖版/白色logo',
+    'A' => '默认版式',
+    'B' => '横板/蓝色logo',
+    'C' => '横板/白色logo',
+    'D' => '竖版/蓝色logo',
+    'E' => '竖版/白色logo'
   }
 
   before_create :default_assign
@@ -1105,7 +1110,7 @@ class Issue < ActiveRecord::Base
       if is
         old_status = i.status
         old_style_effect = Issue::STYLE_EFFECT[i.style_effect]
-        i.update_attributes(:style_effect=>'0',
+        i.update_attributes(:style_effect=>'A',#:style_effect=>'0',
                             :status=>is)
         
         attachment = i.attachments.last
@@ -1121,7 +1126,7 @@ class Issue < ActiveRecord::Base
         for f in dirp
           case f
           when /^\./, /~$/, /\.o/
-          when /^#{i.code}(\d| ){9}.jpg$/
+          when /^#{i.code}(\d| ){6}(\d| |A|B|C|D|E){1}(\d| ){2}.jpg$/
             FileUtils.mv("#{incoming}/#{f}","#{failed}/#{f}")
           end
         end

@@ -10,7 +10,7 @@ class Spdcc
   SUCCESS = "#{Setting.spdcc_path}/success"
   OUTPUT_BK = "#{Setting.spdcc_path}/output_bk"
   
-  MATCH_FORMAT = /^((13[0-9])|(15[0-9])|(18[0-9]))\d{8}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])(  |88|99)(  |\d{2})(  |\d{2})( |1|2|3|4)(  |\d{2}).jpg$/
+  MATCH_FORMAT = /^((13[0-9])|(15[0-9])|(18[0-9]))\d{8}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])(  |88|99)(  |\d{2})(  |\d{2})( |1|2|3|4|A|B|C|D|E)(  |\d{2}).jpg$/
   
   def self.parse_task
     @logger.info "\n********** #{Time.now.to_s(:db)} parsing **********"
@@ -107,7 +107,7 @@ class Spdcc
     for ff in dirp
       case ff
       when /^\./, /~$/, /\.o/
-      when /^#{i.code}(\d| ){9}.jpg$/
+      when /^#{i.code}(\d| ){6}(\d| |A|B|C|D|E){1}(\d| ){2}.jpg$/
         image_array << ff
       end
     end
