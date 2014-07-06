@@ -123,7 +123,8 @@ class Issue < ActiveRecord::Base
   }
   
   named_scope :status_change_on_gt, lambda {|date|
-    {:conditions => ["issues.status_change_on <= ?", ((date-10).to_time + 5*60*60).to_s(:db)]}
+    # VP将系统设置出“默认卡面”的时间由10天宽限期调整为30天
+    {:conditions => ["issues.status_change_on <= ?", ((date-30).to_time + 5*60*60).to_s(:db)]}
   }
   
   TASK_TYPES = {
@@ -1106,7 +1107,6 @@ class Issue < ActiveRecord::Base
   def self.observe_status_vp08
     is = IssueStatus.find_by_code("VP08")
     Issue.in_status_code(["VP00","VP02","VP04","VP06"]).status_change_on_gt(Date.today).all.each do |i|
-      puts i
       if is
         old_status = i.status
         old_style_effect = Issue::STYLE_EFFECT[i.style_effect]
