@@ -42,11 +42,43 @@ class Feedback
     to = Date.today
     file_name = "0310-SKTRSPLAYOUT-#{to.to_s.gsub('-','')}"
     file = File.new("#{OUTPUT_VPTOMKT}/#{file_name}","w")
-    file.write "0#{Issue.in_status_code('VP08').in_finished_on(to).in_style_effect(0).count}\r\n"
-    file.write "1#{Issue.in_status_code('VP07').in_finished_on(to).in_style_effect(1).count}\r\n"
-    file.write "2#{Issue.in_status_code('VP07').in_finished_on(to).in_style_effect(2).count}\r\n"
-    file.write "3#{Issue.in_status_code('VP07').in_finished_on(to).in_style_effect(3).count}\r\n"
-    file.write "4#{Issue.in_status_code('VP07').in_finished_on(to).in_style_effect(4).count}\r\n"
+    
+    issues_A = Issue.in_status_code('VP08').in_finished_on(to).in_style_effect([0,'A'])
+    issues_B = Issue.in_status_code('VP07').in_finished_on(to).in_style_effect([1,'B'])
+    issues_C = Issue.in_status_code('VP07').in_finished_on(to).in_style_effect([2,'C'])
+    issues_D = Issue.in_status_code('VP07').in_finished_on(to).in_style_effect([3,'D'])
+    issues_E = Issue.in_status_code('VP07').in_finished_on(to).in_style_effect([4,'E'])
+    
+    file.write "A#{issues_A.count}"
+    issues_A.all.each do |issue|
+      file.write ",#{issue.code}"
+    end
+    file.write "\r\n"
+    
+    file.write "B#{issues_B.count}"
+    issues_B.all.each do |issue|
+      file.write ",#{issue.code}"
+    end
+    file.write "\r\n"
+    
+    file.write "C#{issues_C.count}"
+    issues_C.all.each do |issue|
+      file.write ",#{issue.code}"
+    end
+    file.write "\r\n"
+    
+    file.write "D#{issues_D.count}"
+    issues_D.all.each do |issue|
+      file.write ",#{issue.code}"
+    end
+    file.write "\r\n"
+    
+    file.write "E#{issues_E.count}"
+    issues_E.all.each do |issue|
+      file.write ",#{issue.code}"
+    end
+    file.write "\r\n"
+    
     file.close
     FileUtils.copy("#{OUTPUT_VPTOMKT}/#{file_name}","#{OUTPUT_BK_VPTOMKT}/#{file_name}")
   end
