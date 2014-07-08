@@ -1039,8 +1039,10 @@ class Issue < ActiveRecord::Base
   def assign_user
     #导入的话执行分配工作
     if User.current == User.anonymous
+      puts self.task_status
       if self.task_status == 3
         old_user = User.find_by_id(self.assigned_to_id) unless self.assigned_to_id.blank?
+        puts self.design_type
         case self.design_type
         when "01"
           assign_to_design_or_csr("设计师","VP05",old_user)
@@ -1052,7 +1054,14 @@ class Issue < ActiveRecord::Base
             old_user.update_attribute(:assigns_count,old_user.assigns_count-1) if old_user
           end
           is = IssueStatus.find_by_code("VP07")
-          self.status=is if is
+          if is
+            # 设计类型为图库自选版，如果当前状态为制图完成，则修改其制图完成时间戳
+            if self.status == is
+              self.finished_on = Time.now
+            else
+              self.status=is
+            end
+          end
           attachment = self.attachments.last
           attachment.update_attribute(:final,1) if attachment
         when "04"
