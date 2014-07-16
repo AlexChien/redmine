@@ -17,7 +17,8 @@ class Feedback
     Attachment.in_ids(attachment_ids).all(:order=>"attachments.created_on ASC").each do |a|
       container = a.container
       if container.class == Issue
-        file_name = "#{container.code}#{container.style_effect}.jpg"
+        # file_name = "#{container.code}#{container.style_effect}.jpg"
+        file_name = "#{container.code}#{container.new_style_effect}.jpg"
         FileUtils.copy("#{Attachment.storage_path}/#{a.disk_filename}","#{OUTPUT_PICTURES}/#{file_name}")
         FileUtils.copy("#{OUTPUT_PICTURES}/#{file_name}","#{OUTPUT_BK_PICTURES}/#{file_name}")
         a.update_attribute(:output,1)

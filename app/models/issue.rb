@@ -290,6 +290,23 @@ class Issue < ActiveRecord::Base
     de = self.design_effect.blank? ? '88' : self.design_effect
     "#{s}#{dt}#{de}"
   end
+  
+  def new_style_effect
+    case self.style_effect
+    when "0"
+      "A"
+    when "1"
+      "B"
+    when "2"
+      "C"
+    when "3"
+      "D"
+    when "4"
+      "E"
+    else
+      self.style_effect
+    end
+  end
 
   def status_id=(sid)
     self.status = nil
